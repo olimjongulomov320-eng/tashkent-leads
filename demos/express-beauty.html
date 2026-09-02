@@ -1,0 +1,485 @@
+<title>Express Beauty Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#fff6f2;
+    --ink:#12060c;
+    --ink-soft:#5c4750;
+    --coral:#ff5a5f;
+    --coral-deep:#e13c46;
+    --lime:#c2f24a;
+    --plum:#2b1b2f;
+    --neutral:#f7d3c4;
+    --line: rgba(18,6,12,0.12);
+    --line-strong: rgba(18,6,12,0.22);
+    --card:#ffffff;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#1c1116;
+      --ink:#fdf1e8;
+      --ink-soft:#c9b0ba;
+      --plum:#f7d3c4;
+      --card:#241620;
+      --line: rgba(253,241,232,0.14);
+      --line-strong: rgba(253,241,232,0.26);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#1c1116;
+    --ink:#fdf1e8;
+    --ink-soft:#c9b0ba;
+    --plum:#f7d3c4;
+    --card:#241620;
+    --line: rgba(253,241,232,0.14);
+    --line-strong: rgba(253,241,232,0.26);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Hanken Grotesk',sans-serif;line-height:1.5;overflow-x:clip;cursor:none;}
+  @media (hover:none),(pointer:coarse){body{cursor:auto;}}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;scroll-behavior:auto !important;}
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--coral);color:#fff;}
+  h1,h2,h3,h4{font-family:'Outfit',sans-serif;font-weight:700;text-wrap:balance;line-height:1.0;}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,64px);}
+  .eyebrow{font-family:'Outfit',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--coral-deep);display:flex;align-items:center;gap:10px;}
+  .eyebrow::before{content:"";width:26px;height:3px;border-radius:2px;background:var(--lime);}
+  button{font-family:inherit;cursor:none;border:none;background:none;color:inherit;}
+  @media (hover:none),(pointer:coarse){button,a{cursor:pointer;}}
+
+  #cursor{position:fixed;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--coral);
+    pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s;}
+  #cursor.big{width:60px;height:60px;background:var(--lime);}
+  @media (hover:none),(pointer:coarse){#cursor{display:none;}}
+  #progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--coral),var(--lime));z-index:9998;width:0%;transition:width .1s linear;}
+
+  #loader{position:fixed;inset:0;background:var(--paper);z-index:10000;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:14px;transition:opacity .6s ease,visibility .6s ease;}
+  #loader.done{opacity:0;visibility:hidden;pointer-events:none;}
+  .loader-mark{font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(2rem,7vw,3.4rem);color:var(--coral);opacity:0;
+    animation:loaderIn .6s ease forwards .1s;}
+  .loader-bar{width:170px;height:3px;border-radius:2px;background:var(--line);position:relative;overflow:hidden;}
+  .loader-bar::after{content:"";position:absolute;inset:0;background:var(--lime);transform:scaleX(0);transform-origin:left;
+    animation:loaderBar 1.1s cubic-bezier(.6,0,.2,1) forwards .2s;}
+  @keyframes loaderIn{to{opacity:1;}}
+  @keyframes loaderBar{to{transform:scaleX(1);}}
+  @media (prefers-reduced-motion: reduce){#loader{display:none;}}
+
+  header.site{position:fixed;top:0;left:0;right:0;z-index:200;padding:22px 0;transition:background .3s,padding .3s,box-shadow .3s;}
+  header.site.scrolled{background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px);
+    padding:14px 0;box-shadow:0 1px 0 var(--line);}
+  .nav-inner{display:flex;justify-content:space-between;align-items:center;}
+  .brand{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.25rem;display:flex;align-items:baseline;gap:2px;}
+  .brand .dot{color:var(--coral);}
+  nav.links{display:flex;gap:clamp(14px,2vw,30px);font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:600;}
+  nav.links a{position:relative;padding-bottom:3px;color:var(--ink-soft);transition:color .25s;}
+  nav.links a:hover{color:var(--ink);}
+  nav.links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--coral);
+    transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+  nav.links a:hover::after{transform:scaleX(1);}
+  .lang-toggle{display:flex;gap:2px;font-family:'Outfit',sans-serif;font-size:0.68rem;font-weight:700;}
+  .lang-toggle button{padding:5px 9px;border:1px solid var(--line-strong);opacity:0.5;border-radius:4px;transition:opacity .2s;}
+  .lang-toggle button.active{opacity:1;border-color:var(--coral);color:var(--coral-deep);}
+  .nav-right{display:flex;align-items:center;gap:16px;}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:700;
+    padding:13px 24px;border-radius:100px;}
+  .btn-solid{background:var(--coral);color:#fff;}
+  .btn-solid span.arrow{transition:transform .3s;}
+  .btn-solid:hover span.arrow{transform:translateX(4px);}
+  .btn-outline{border:2px solid var(--ink);color:var(--ink);}
+  .btn-outline:hover{background:var(--ink);color:var(--paper);}
+  .magnetic{transition:transform .25s cubic-bezier(.2,.8,.2,1);}
+
+  .reveal{opacity:1;transform:none;}
+  @media (prefers-reduced-motion: no-preference){
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1);}
+    .reveal.in{opacity:1;transform:none;}
+  }
+
+  section{position:relative;}
+  .pad{padding:clamp(70px,9vw,140px) 0;}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;
+    background:radial-gradient(ellipse at 80% 10%, var(--neutral) 0%, transparent 55%);}
+  .hero-content{position:relative;z-index:2;padding:140px 0 50px;}
+  .hero-title{font-size:clamp(3rem,9vw,7.5rem);letter-spacing:-0.02em;}
+  .hero-title .line{overflow:hidden;display:block;}
+  .hero-title .line span{display:inline-block;transform:translateY(110%);animation:lineUp 1s cubic-bezier(.2,.8,.2,1) forwards;}
+  .hero-title .line:nth-child(1) span{animation-delay:.9s;}
+  .hero-title .line:nth-child(2) span{animation-delay:1.05s;color:var(--coral);}
+  @keyframes lineUp{to{transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){.hero-title .line span{transform:none;animation:none;}}
+  .hero-sub{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-top:26px;}
+  .hero-tagline{max-width:38ch;color:var(--ink-soft);font-size:1.02rem;}
+
+  /* Location picker + booking */
+  .picker{margin-top:36px;background:var(--card);border:2px solid var(--ink);border-radius:20px;
+    padding:20px 24px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;}
+  .picker-locs{display:flex;gap:8px;flex-wrap:wrap;}
+  .loc-chip{padding:10px 18px;border-radius:100px;border:2px solid var(--line-strong);font-family:'Outfit',sans-serif;
+    font-size:0.8rem;font-weight:600;transition:all .2s;}
+  .loc-chip.active{background:var(--coral);border-color:var(--coral);color:#fff;}
+
+  /* TICKER */
+  .ticker{white-space:nowrap;overflow:hidden;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);
+    padding:16px 0;background:var(--neutral);}
+  .ticker .track{display:inline-block;animation:tick 24s linear infinite;}
+  .ticker span{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.15rem;padding:0 2rem;text-transform:uppercase;}
+  @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  /* SERVICE RAIL — scroll-snap horizontal */
+  .rail-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;flex-wrap:wrap;gap:16px;}
+  .rail-dial{width:44px;height:44px;border-radius:50%;border:3px solid var(--line);position:relative;flex:0 0 auto;}
+  .rail-dial-fill{position:absolute;inset:-3px;border-radius:50%;border:3px solid var(--coral);
+    clip-path:polygon(50% 50%, 50% 0%, 50% 0%);}
+  .service-rail{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;-webkit-overflow-scrolling:touch;}
+  .service-rail::-webkit-scrollbar{height:6px;}
+  .service-rail::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px;}
+  .service-card{scroll-snap-align:start;flex:0 0 min(78vw,320px);background:var(--card);border:2px solid var(--ink);
+    border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:14px;}
+  .service-card .icon-block{width:56px;height:56px;border-radius:14px;background:var(--neutral);display:flex;
+    align-items:center;justify-content:center;font-size:1.5rem;}
+  .service-card h4{font-size:1.25rem;}
+  .service-card p{color:var(--ink-soft);font-size:0.88rem;}
+  .service-price{margin-top:auto;font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;color:var(--coral-deep);}
+
+  /* INSTAGRAM proof */
+  .ig-section{background:var(--plum);color:#fdf1e8;}
+  .ig-head{display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;}
+  .ig-count{font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(3.2rem,8vw,6rem);color:var(--lime);}
+  .ig-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:40px;}
+  .ig-tile{aspect-ratio:1;border-radius:12px;overflow:hidden;position:relative;background:#3a2436;}
+  .ig-tile svg{width:100%;height:100%;transition:transform .5s;}
+  .ig-tile:hover svg{transform:scale(1.08);}
+  @media (max-width:760px){.ig-grid{grid-template-columns:repeat(2,1fr);}}
+
+  /* Locations map */
+  .locations-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;}
+  .loc-card{background:var(--card);border:2px solid var(--ink);border-radius:20px;padding:24px;}
+  .loc-card h4{font-size:1.15rem;margin-bottom:8px;}
+  .loc-card p{color:var(--ink-soft);font-size:0.85rem;}
+  @media (max-width:860px){.locations-grid{grid-template-columns:1fr;}}
+
+  /* Reviews */
+  .review-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;}
+  .review-card{scroll-snap-align:start;flex:0 0 min(80vw,380px);background:var(--card);border:2px solid var(--ink);
+    border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:16px;}
+  .review-stars{color:var(--coral);letter-spacing:2px;}
+  .review-quote{font-family:'Outfit',sans-serif;font-weight:500;font-size:1.05rem;}
+  .review-who{font-size:0.8rem;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:12px;margin-top:auto;}
+
+  /* CTA */
+  .final-cta{min-height:80vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+    background:linear-gradient(135deg, var(--coral) 0%, var(--coral-deep) 100%);color:#fff;}
+  .final-cta-content{position:relative;z-index:2;text-align:center;}
+  .final-cta h2{font-size:clamp(2.8rem,8vw,6rem);color:#fff;}
+  .final-cta h2 em{color:var(--lime);font-style:normal;}
+  .final-cta p{max-width:44ch;margin:20px auto 34px;opacity:0.92;}
+  .final-cta .btn-solid{background:#fff;color:var(--coral-deep);}
+
+  footer{padding:64px 0 30px;}
+  .foot-grid{display:grid;grid-template-columns:1.3fr repeat(3,1fr);gap:36px;padding-bottom:44px;border-bottom:2px solid var(--line);}
+  .foot-brand p{color:var(--ink-soft);max-width:30ch;margin-top:12px;font-size:0.88rem;}
+  .foot-col h4{font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px;}
+  .foot-col a,.foot-col p{display:block;font-size:0.9rem;color:var(--ink-soft);margin-bottom:8px;}
+  .foot-col a:hover{color:var(--coral);}
+  .foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:20px;font-size:0.78rem;color:var(--ink-soft);}
+
+  @media (max-width:900px){nav.links{display:none;} .foot-grid{grid-template-columns:1fr 1fr;}}
+  [data-i18n-ru]{display:none;}
+  [data-lang="ru"] [data-i18n-ru]{display:revert;}
+  [data-lang="ru"] [data-i18n-uz]{display:none;}
+</style>
+
+<div id="loader"><div class="loader-mark">EXPRESS BEAUTY</div><div class="loader-bar"></div></div>
+<div id="cursor"></div>
+<div id="progress"></div>
+
+<header class="site" id="siteHeader">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand">Express<span class="dot">.</span>Beauty</a>
+    <nav class="links">
+      <a href="#services" data-i18n-uz>Xizmatlar</a><a href="#services" data-i18n-ru>Услуги</a>
+      <a href="#locations" data-i18n-uz>Filiallar</a><a href="#locations" data-i18n-ru>Филиалы</a>
+      <a href="#reviews" data-i18n-uz>Fikrlar</a><a href="#reviews" data-i18n-ru>Отзывы</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang-toggle">
+        <button data-lang-btn="uz" class="active">UZ</button>
+        <button data-lang-btn="ru">RU</button>
+      </div>
+      <a href="#book" class="btn btn-solid magnetic"><span data-i18n-uz>Band qilish</span><span data-i18n-ru>Записаться</span></a>
+    </div>
+  </div>
+</header>
+
+<div id="top"></div>
+
+<section class="hero">
+  <div class="hero-content wrap">
+    <span class="eyebrow"><span data-i18n-uz>Toshkentda 4 filial</span><span data-i18n-ru>4 филиала в Ташкенте</span></span>
+    <h1 class="hero-title">
+      <span class="line" data-i18n-uz><span>GO'ZALLIK</span></span>
+      <span class="line" data-i18n-uz><span>TEZ VA ANIQ.</span></span>
+      <span class="line" data-i18n-ru><span>КРАСОТА</span></span>
+      <span class="line" data-i18n-ru><span>БЫСТРО И ТОЧНО.</span></span>
+    </h1>
+    <div class="hero-sub">
+      <p class="hero-tagline">
+        <span data-i18n-uz>Sartaroshlik, manikyur, kosmetologiya &mdash; oilaviy jamoa, professional natija.</span>
+        <span data-i18n-ru>Стрижки, маникюр, косметология &mdash; семейная команда, профессиональный результат.</span>
+      </p>
+    </div>
+    <div class="picker" id="book">
+      <div class="picker-locs" id="locPicker">
+        <button class="loc-chip active" data-loc="yunusabad">Yunusabad</button>
+        <button class="loc-chip" data-loc="chilanzar">Chilanzar</button>
+        <button class="loc-chip" data-loc="mirabad">Mirabad</button>
+        <button class="loc-chip" data-loc="sergeli">Sergeli</button>
+      </div>
+      <a href="#" class="btn btn-solid magnetic" onclick="alert('Demo: PMS yoki booking tizimiga ulang / Подключите к системе бронирования')">
+        <span data-i18n-uz>Joy band qilish</span><span data-i18n-ru>Записаться на приём</span><span class="arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="track">
+    <span data-i18n-uz>SARTAROSHLIK</span><span data-i18n-ru>СТРИЖКИ</span>
+    <span>&mdash;</span>
+    <span data-i18n-uz>MANIKYUR</span><span data-i18n-ru>МАНИКЮР</span>
+    <span>&mdash;</span>
+    <span data-i18n-uz>KOSMETOLOGIYA</span><span data-i18n-ru>КОСМЕТОЛОГИЯ</span>
+    <span>&mdash;</span>
+    <span data-i18n-uz>SARTAROSHLIK</span><span data-i18n-ru>СТРИЖКИ</span>
+    <span>&mdash;</span>
+    <span data-i18n-uz>MANIKYUR</span><span data-i18n-ru>МАНИКЮР</span>
+    <span>&mdash;</span>
+    <span data-i18n-uz>KOSMETOLOGIYA</span><span data-i18n-ru>КОСМЕТОЛОГИЯ</span>
+    <span>&mdash;</span>
+  </div>
+</div>
+
+<section class="pad" id="services">
+  <div class="wrap">
+    <div class="rail-head reveal">
+      <div>
+        <span class="eyebrow"><span data-i18n-uz>01 &mdash; Xizmatlar</span><span data-i18n-ru>01 &mdash; Услуги</span></span>
+        <h2 style="margin-top:12px;font-size:clamp(2rem,4vw,3rem);"><span data-i18n-uz>Suring va tanlang.</span><span data-i18n-ru>Листайте и выбирайте.</span></h2>
+      </div>
+      <div class="rail-dial"><div class="rail-dial-fill" id="railDial"></div></div>
+    </div>
+    <div class="service-rail reveal" id="serviceRail">
+      <div class="service-card"><div class="icon-block">&#9986;&#65039;</div><h4 data-i18n-uz>Ayollar sartaroshligi</h4><h4 data-i18n-ru>Женская стрижка</h4><p data-i18n-uz>Yuvish, kesish, styling.</p><p data-i18n-ru>Мытьё, стрижка, укладка.</p><div class="service-price">120 000 UZS</div></div>
+      <div class="service-card"><div class="icon-block">&#128131;</div><h4 data-i18n-uz>Erkaklar sartaroshligi</h4><h4 data-i18n-ru>Мужская стрижка</h4><p data-i18n-uz>Klassik va zamonaviy uslublar.</p><p data-i18n-ru>Классические и современные стили.</p><div class="service-price">70 000 UZS</div></div>
+      <div class="service-card"><div class="icon-block">&#128132;</div><h4 data-i18n-uz>Manikyur + gel lak</h4><h4 data-i18n-ru>Маникюр + гель-лак</h4><p data-i18n-uz>To'liq parvarish, dizayn imkoniyati.</p><p data-i18n-ru>Полный уход, возможен дизайн.</p><div class="service-price">95 000 UZS</div></div>
+      <div class="service-card"><div class="icon-block">&#10024;</div><h4 data-i18n-uz>Yuz kosmetologiyasi</h4><h4 data-i18n-ru>Косметология лица</h4><p data-i18n-uz>Tozalash, parvarish dasturlari.</p><p data-i18n-ru>Чистка, программы ухода.</p><div class="service-price">180 000 UZS</div></div>
+      <div class="service-card"><div class="icon-block">&#128139;</div><h4 data-i18n-uz>Kelin make-up</h4><h4 data-i18n-ru>Свадебный макияж</h4><p data-i18n-uz>To'y kuni uchun to'liq tayyorgarlik.</p><p data-i18n-ru>Полная подготовка на день свадьбы.</p><div class="service-price">450 000 UZS</div></div>
+      <div class="service-card"><div class="icon-block">&#128021;</div><h4 data-i18n-uz>Bo'yash va tonirovka</h4><h4 data-i18n-ru>Окрашивание и тонирование</h4><p data-i18n-uz>Ammiaksiz bo'yoqlar.</p><p data-i18n-ru>Безаммиачные краски.</p><div class="service-price">from 250 000 UZS</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad ig-section">
+  <div class="wrap">
+    <div class="ig-head reveal">
+      <span class="eyebrow" style="color:var(--lime);"><span data-i18n-uz>02 &mdash; Instagram jamoasi</span><span data-i18n-ru>02 &mdash; Наша команда в Instagram</span></span>
+    </div>
+    <div class="ig-head reveal" style="margin-top:10px;">
+      <div class="ig-count" id="igCount">0</div>
+      <div><div style="font-family:'Outfit',sans-serif;font-weight:700;">@express_beauty_team</div>
+        <div style="opacity:0.7;font-size:0.85rem;" data-i18n-uz>obunachi &mdash; kunlik ish jarayoni</div>
+        <div style="opacity:0.7;font-size:0.85rem;" data-i18n-ru>подписчиков &mdash; ежедневная работа команды</div></div>
+    </div>
+    <div class="ig-grid reveal">
+      <div class="ig-tile"><svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#ff5a5f"/><circle cx="100" cy="80" r="40" fill="#f7d3c4" opacity="0.6"/></svg></div>
+      <div class="ig-tile"><svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#c2f24a"/><rect x="40" y="40" width="120" height="120" fill="#2b1b2f" opacity="0.25"/></svg></div>
+      <div class="ig-tile"><svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#f7d3c4"/><circle cx="100" cy="100" r="60" fill="#ff5a5f" opacity="0.5"/></svg></div>
+      <div class="ig-tile"><svg viewBox="0 0 200 200"><rect width="200" height="200" fill="#2b1b2f"/><circle cx="70" cy="70" r="30" fill="#c2f24a" opacity="0.7"/><circle cx="140" cy="140" r="30" fill="#ff5a5f" opacity="0.7"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="locations">
+  <div class="wrap">
+    <span class="eyebrow reveal"><span data-i18n-uz>03 &mdash; Filiallar</span><span data-i18n-ru>03 &mdash; Филиалы</span></span>
+    <h2 class="reveal" style="margin-top:12px;font-size:clamp(2rem,4vw,3rem);"><span data-i18n-uz>Sizga yaqin filial.</span><span data-i18n-ru>Филиал рядом с вами.</span></h2>
+    <div class="locations-grid reveal">
+      <div class="loc-card"><h4>Yunusabad</h4><p data-i18n-uz>Bosh filial &middot; 09:00&ndash;20:00</p><p data-i18n-ru>Главный филиал &middot; 09:00&ndash;20:00</p></div>
+      <div class="loc-card"><h4>Chilanzar</h4><p data-i18n-uz>Oilaviy xizmat &middot; 09:00&ndash;20:00</p><p data-i18n-ru>Семейный сервис &middot; 09:00&ndash;20:00</p></div>
+      <div class="loc-card"><h4>Mirabad</h4><p data-i18n-uz>Kosmetologiya markazi &middot; 10:00&ndash;21:00</p><p data-i18n-ru>Центр косметологии &middot; 10:00&ndash;21:00</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="reviews">
+  <div class="wrap">
+    <span class="eyebrow reveal"><span data-i18n-uz>04 &mdash; Fikrlar</span><span data-i18n-ru>04 &mdash; Отзывы</span></span>
+    <h2 class="reveal" style="margin-top:12px;font-size:clamp(2rem,4vw,3rem);"><span data-i18n-uz>46 000+ obunachi ishonchi.</span><span data-i18n-ru>Доверие 46 000+ подписчиков.</span></h2>
+    <div class="review-track reveal" style="margin-top:36px;">
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-quote" data-i18n-uz>"Butun oila shu yerga boradi &mdash; onam, men, qizim. Har safar bir xil sifat."</p>
+        <p class="review-quote" data-i18n-ru>"Вся семья ходит сюда &mdash; мама, я, дочка. Каждый раз одинаковое качество."</p>
+        <div class="review-who">Dilnoza, Yunusabad</div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-quote" data-i18n-uz>"Instagram orqali topdim, endi doimiy mijozman."</p>
+        <p class="review-quote" data-i18n-ru>"Нашла через Instagram, теперь постоянный клиент."</p>
+        <div class="review-who">Kamola, Chilanzar</div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-quote" data-i18n-uz>"To'yga tayyorgarlik uchun eng yaxshi tanlov edi."</p>
+        <p class="review-quote" data-i18n-ru>"Лучший выбор для подготовки к свадьбе."</p>
+        <div class="review-who">Nigora, Mirabad</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="final-cta-content wrap">
+    <span class="eyebrow" style="color:var(--lime);justify-content:center;"><span data-i18n-uz>Band qilish</span><span data-i18n-ru>Запись</span></span>
+    <h2><span data-i18n-uz>NAVBATINGIZNI <em>OLING.</em></span><span data-i18n-ru>ЗАБРОНИРУЙТЕ <em>ВРЕМЯ.</em></span></h2>
+    <p data-i18n-uz>4 filial, bitta tugma bilan bron qiling &mdash; DM yozishga hojat yo'q.</p>
+    <p data-i18n-ru>4 филиала, бронирование в одну кнопку &mdash; без переписки в директе.</p>
+    <a href="#book" class="btn btn-solid magnetic"><span data-i18n-uz>Hoziroq band qiling</span><span data-i18n-ru>Записаться сейчас</span><span class="arrow">&rarr;</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand" style="mix-blend-mode:normal;">Express<span class="dot">.</span>Beauty</a>
+        <p data-i18n-uz>Toshkentdagi 4 filialli oilaviy go'zallik jamoasi.</p>
+        <p data-i18n-ru>Семейная команда красоты с 4 филиалами в Ташкенте.</p>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n-uz>Sahifalar</h4><h4 data-i18n-ru>Разделы</h4>
+        <a href="#services" data-i18n-uz>Xizmatlar</a><a href="#services" data-i18n-ru>Услуги</a>
+        <a href="#locations" data-i18n-uz>Filiallar</a><a href="#locations" data-i18n-ru>Филиалы</a>
+        <a href="#reviews" data-i18n-uz>Fikrlar</a><a href="#reviews" data-i18n-ru>Отзывы</a>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n-uz>Aloqa</h4><h4 data-i18n-ru>Контакты</h4>
+        <p data-i18n-uz>Telefon hozircha ochiq e'lon qilinmagan</p>
+        <p data-i18n-ru>Телефон пока не опубликован публично</p>
+        <a href="https://instagram.com/express_beauty_team" target="_blank">@express_beauty_team</a>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n-uz>Ijtimoiy tarmoqlar</h4><h4 data-i18n-ru>Соцсети</h4>
+        <a href="#">Instagram</a>
+        <a href="#">Telegram</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span data-i18n-uz>&copy; 2026 Express Beauty Team.</span>
+      <span data-i18n-ru>&copy; 2026 Express Beauty Team.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loader').classList.add('done'), 1200);
+  });
+
+  const langBtns = document.querySelectorAll('[data-lang-btn]');
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.langBtn;
+      document.documentElement.setAttribute('data-lang', lang);
+      langBtns.forEach(b => b.classList.toggle('active', b.dataset.langBtn === lang));
+    });
+  });
+
+  const cursor = document.getElementById('cursor');
+  const hasFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if (hasFinePointer) {
+    window.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+    });
+    document.querySelectorAll('a,button').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+  }
+  if (hasFinePointer && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    document.querySelectorAll('.magnetic').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width/2, y = e.clientY - r.top - r.height/2;
+        el.style.transform = `translate(${x*0.25}px, ${y*0.35}px)`;
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+    });
+  }
+
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 40), {passive:true});
+
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    progress.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+  }, {passive:true});
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // location picker
+  document.querySelectorAll('.loc-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // service rail progress dial
+  const rail = document.getElementById('serviceRail');
+  const dialFill = document.getElementById('railDial');
+  rail.addEventListener('scroll', () => {
+    const pct = rail.scrollLeft / (rail.scrollWidth - rail.clientWidth || 1);
+    const deg = Math.min(360, Math.max(0, pct * 360));
+    dialFill.style.clipPath = `polygon(50% 50%, 50% 0%, ${deg <= 180 ? `${50 + 50*Math.tan((deg)*Math.PI/180)}% 0%` : '100% 0%'}, 100% 100%, 0% 100%, 0% 0%)`;
+    dialFill.style.background = `conic-gradient(#ff5a5f ${deg}deg, transparent ${deg}deg)`;
+  }, {passive:true});
+
+  // instagram counter
+  const igCount = document.getElementById('igCount');
+  let counted = false;
+  const igIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !counted) {
+        counted = true;
+        const target = 46000;
+        const dur = 1400;
+        const start = performance.now();
+        function tick(now){
+          const p = Math.min(1, (now - start) / dur);
+          igCount.textContent = Math.floor(p * target).toLocaleString('en-US');
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        igIo.disconnect();
+      }
+    });
+  }, {threshold:0.5});
+  igIo.observe(igCount);
+</script>

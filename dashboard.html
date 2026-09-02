@@ -1,0 +1,89 @@
+<title>Tashkent Leads Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#0c0e10; --panel:#15181b; --panel-2:#1c2024; --line:#2a2f34;
+    --ink:#eef0f2; --dim:#8b9298; --accent:#d9a441; --good:#4caf7d; --warn:#e0714d; --bad:#3a3e42;
+  }
+  :root[data-theme="light"]{
+    --bg:#f5f4f1; --panel:#ffffff; --panel-2:#f0eee9; --line:#dedad2;
+    --ink:#17181a; --dim:#6b6f73; --accent:#b6790f; --good:#2e8b57; --warn:#c65a34; --bad:#c7c2b6;
+  }
+  @media (prefers-color-scheme:light){
+    :root:not([data-theme="dark"]){
+      --bg:#f5f4f1; --panel:#ffffff; --panel-2:#f0eee9; --line:#dedad2;
+      --ink:#17181a; --dim:#6b6f73; --accent:#b6790f; --good:#2e8b57; --warn:#c65a34; --bad:#c7c2b6;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;padding:0 0 80px;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px;}
+  header{padding:56px 0 32px;border-bottom:1px solid var(--line);}
+  h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(2rem,4vw,3rem);margin:0 0 8px;}
+  .sub{color:var(--dim);font-size:0.95rem;max-width:60ch;}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);margin:32px 0 0;border:1px solid var(--line);}
+  .stat{background:var(--panel);padding:24px 20px;}
+  .stat b{display:block;font-family:'Fraunces',serif;font-size:2.2rem;color:var(--accent);font-weight:500;}
+  .stat span{font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--dim);}
+  .section{margin-top:48px;}
+  .section h2{font-family:'Fraunces',serif;font-weight:500;font-size:1.4rem;margin-bottom:16px;}
+  table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  th{text-align:left;padding:10px 14px;color:var(--dim);font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;border-bottom:1px solid var(--line);}
+  td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:hover td{background:var(--panel-2);}
+  .biz{font-weight:600;}
+  .cat{color:var(--dim);font-size:0.78rem;}
+  .score{font-family:'JetBrains Mono',monospace;}
+  .pill{display:inline-block;padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:600;}
+  .pill.built{background:color-mix(in srgb, var(--good) 20%, transparent);color:var(--good);}
+  .pill.pending{background:color-mix(in srgb, var(--dim) 20%, transparent);color:var(--dim);}
+  .opp{font-family:'JetBrains Mono',monospace;font-weight:600;}
+  .opp.high{color:var(--warn);}
+  .opp.mid{color:var(--accent);}
+  a.demolink{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor;}
+  a.demolink:hover{opacity:0.7;}
+  footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:0.8rem;}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Tashkent Business Leads</h1>
+    <p class="sub">Internal sales dashboard — website opportunity research for Tashkent businesses. Public business information only (name, address, business phone, public social handles, aggregate ratings). Not a public directory.</p>
+    <div class="stats">
+      <div class="stat"><b>18</b><span>Businesses researched</span></div>
+      <div class="stat"><b>13</b><span>No website found</span></div>
+      <div class="stat"><b>3</b><span>Outdated website</span></div>
+      <div class="stat"><b>9</b><span>Top opportunities</span></div>
+      <div class="stat"><b>6</b><span>Demos built</span></div>
+      <div class="stat"><b>5</b><span>Categories covered</span></div>
+    </div>
+  </header>
+
+  <div class="section">
+    <h2>Top opportunities</h2>
+    <table>
+      <thead><tr><th>Rank</th><th>Business</th><th>Category</th><th>Site score</th><th>Opportunity</th><th>Demo</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="biz">Affresco Ristorante<div class="cat">Restaurant · Yakkasaray</div></td><td>Restaurant</td><td class="score">1/10</td><td class="opp high">9</td><td><span class="pill built">Built</span> &middot; <a class="demolink" href="https://claude.ai/code/artifact/41b84556-5429-4a92-8fa9-9118002bfb92" target="_blank">demo</a></td></tr>
+        <tr><td>2</td><td class="biz">Express Beauty Team<div class="cat">Beauty salon · multi-location</div></td><td>Beauty</td><td class="score">1/10</td><td class="opp high">9</td><td><span class="pill built">Built</span> &middot; <a class="demolink" href="https://claude.ai/code/artifact/2cfe5769-6982-4765-b8b7-f644c32f329f" target="_blank">demo</a></td></tr>
+        <tr><td>3</td><td class="biz">EstiMED Clinic<div class="cat">Multi-specialty clinic · Chilanzar</div></td><td>Clinic</td><td class="score">4/10</td><td class="opp high">8</td><td><span class="pill built">Built</span> &middot; <a class="demolink" href="https://claude.ai/code/artifact/a4988f8e-c5d3-4996-a093-b0077aadb495" target="_blank">demo</a></td></tr>
+        <tr><td>4</td><td class="biz">Барбершоп Дядя Chill<div class="cat">Barbershop · 2 locations</div></td><td>Barbershop</td><td class="score">1/10</td><td class="opp high">8</td><td><span class="pill built">Built</span> &middot; <a class="demolink" href="https://claude.ai/code/artifact/a12042a0-e44c-48af-840c-58870ed7f0a8" target="_blank">demo</a></td></tr>
+        <tr><td>5</td><td class="biz">AnnTerra Beauty<div class="cat">Premium salon · Mirabad</div></td><td>Beauty</td><td class="score">2/10</td><td class="opp high">8</td><td><span class="pill built">Built</span> &middot; <a class="demolink" href="https://claude.ai/code/artifact/849fe448-0268-45ca-8dca-a6c96f4a3ef6" target="_blank">demo</a></td></tr>
+        <tr><td>6</td><td class="biz">Smalto<div class="cat">Dentistry · 2 locations</div></td><td>Clinic</td><td class="score">4/10</td><td class="opp mid">7</td><td><span class="pill pending">Pending</span></td></tr>
+        <tr><td>7</td><td class="biz">Basilic<div class="cat">Restaurant · Mirabad</div></td><td>Restaurant</td><td class="score">1/10</td><td class="opp mid">7</td><td><span class="pill pending">Pending</span></td></tr>
+        <tr><td>8</td><td class="biz">Stomaservice<div class="cat">Dentistry</div></td><td>Clinic</td><td class="score">1/10</td><td class="opp mid">7</td><td><span class="pill pending">Pending</span></td></tr>
+        <tr><td>9</td><td class="biz">BEFIT<div class="cat">Fitness · multi-location</div></td><td>Fitness</td><td class="score">2/10</td><td class="opp mid">7</td><td><span class="pill built">Built</span> &middot; <a class="demolink" href="https://claude.ai/code/artifact/9e626dc2-c30c-4bd4-96e6-9f416930e1b0" target="_blank">demo</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Full lead list</h2>
+    <p class="sub" style="margin-bottom:16px;">Full 18-business breakdown across 5 categories: see <a class="demolink" href="https://github.com/olimjongulomov320-eng/tashkent-leads/blob/main/TASHKENT_LEADS.md" target="_blank">TASHKENT_LEADS.md</a> in the repo.</p>
+  </div>
+
+  <footer>
+    Compiled 2026-09-02 &middot; public sources only (Google/Yandex/2GIS, Instagram, TripAdvisor, direct site inspection) &middot; no personal data collected.
+  </footer>
+</div>

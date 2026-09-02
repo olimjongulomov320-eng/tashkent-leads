@@ -1,0 +1,1221 @@
+<title>Affresco Ristorante</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+  /* ============================================================
+     AFFRESCO RISTORANTE — Sicilian dining room, Tashkent
+     Single committed visual world: a dark room lit by candles.
+     Tokens still follow the light/dark contract; the "light"
+     state warms the room rather than inverting it.
+     ============================================================ */
+  :root{
+    --ash:#140b09;          /* volcanic ash — the room */
+    --ash-2:#1f1210;        /* raised surface */
+    --ash-3:#2a1916;        /* card / inset */
+    --lime-paper:#f2e4cf;   /* limestone plaster */
+    --lime-dim:#cbb9a0;     /* secondary text */
+    --wine:#8f1d2c;         /* wine-dark red */
+    --wine-lit:#b32b3d;
+    --amber:#e0913a;        /* candlelight */
+    --amber-soft:#f0c187;
+    --olive:#5c6b3c;        /* olive branch */
+    --terra:#c96f4a;        /* Sicilian ceramic */
+    --rule:rgba(242,228,207,0.14);
+    --rule-strong:rgba(242,228,207,0.3);
+    --focus:#f0c187;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ash:#0f0806;
+      --ash-2:#190e0c;
+      --ash-3:#241512;
+      --rule:rgba(242,228,207,0.12);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ash:#0f0806;
+    --ash-2:#190e0c;
+    --ash-3:#241512;
+    --rule:rgba(242,228,207,0.12);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ash);
+    color:var(--lime-paper);
+    font-family:'Jost',system-ui,-apple-system,sans-serif;
+    font-weight:300;
+    line-height:1.6;
+    overflow-x:clip;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (hover:hover) and (pointer:fine){ body{cursor:none;} body button,body a{cursor:none;} }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}
+  }
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer;}
+  svg{display:block;}
+  ::selection{background:var(--wine);color:var(--lime-paper);}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
+
+  h1,h2,h3,h4{font-family:'Bodoni Moda',Didot,'Times New Roman',serif;font-weight:400;line-height:1.02;text-wrap:balance;}
+
+  .wrap{max-width:1360px;margin:0 auto;padding:0 clamp(20px,4.5vw,72px);}
+  .label{
+    font-family:'Jost',sans-serif;font-weight:500;font-size:0.68rem;
+    letter-spacing:0.3em;text-transform:uppercase;color:var(--amber);
+  }
+  .rule-label{display:flex;align-items:center;gap:14px;}
+  .rule-label::before{content:"";width:34px;height:1px;background:var(--wine-lit);flex:none;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  /* -------- cursor -------- */
+  #cursor{
+    position:fixed;top:0;left:0;width:10px;height:10px;border-radius:50%;
+    background:var(--amber);pointer-events:none;z-index:9999;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 18px 6px rgba(224,145,58,0.45);
+    transition:width .3s cubic-bezier(.2,.8,.2,1),height .3s cubic-bezier(.2,.8,.2,1),background .3s,box-shadow .3s;
+  }
+  #cursor.wide{width:70px;height:70px;background:rgba(224,145,58,0.18);box-shadow:0 0 40px 10px rgba(224,145,58,0.2);}
+  @media (hover:none),(pointer:coarse){ #cursor{display:none;} }
+
+  /* -------- progress -------- */
+  #progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:9998;
+    background:linear-gradient(90deg,var(--wine),var(--amber));}
+
+  /* -------- preloader -------- */
+  #loader{
+    position:fixed;inset:0;z-index:10000;background:var(--ash);
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .9s ease,visibility .9s ease;
+  }
+  #loader.done{opacity:0;visibility:hidden;pointer-events:none;}
+  .loader-inner{text-align:center;}
+  .loader-flame{margin:0 auto 22px;width:44px;height:64px;}
+  .loader-flame .fl{transform-origin:50% 100%;animation:flick 1.6s ease-in-out infinite;}
+  @keyframes flick{0%,100%{transform:scaleY(1) scaleX(1);opacity:.95;}45%{transform:scaleY(1.12) scaleX(.92);opacity:1;}}
+  .loader-word{
+    font-family:'Bodoni Moda',serif;font-size:clamp(2rem,7vw,3.4rem);letter-spacing:0.14em;
+    color:var(--lime-paper);display:flex;justify-content:center;gap:0.02em;
+  }
+  .loader-word span{opacity:0;transform:translateY(14px);animation:letterIn .7s cubic-bezier(.2,.8,.2,1) forwards;}
+  @keyframes letterIn{to{opacity:1;transform:none;}}
+  .loader-sub{margin-top:14px;font-size:0.66rem;letter-spacing:0.34em;text-transform:uppercase;color:var(--amber);
+    opacity:0;animation:letterIn .8s ease forwards .9s;}
+  @media (prefers-reduced-motion: reduce){ #loader{display:none;} }
+
+  /* -------- header -------- */
+  header.site{position:fixed;top:0;left:0;right:0;z-index:300;padding:22px 0;
+    transition:background .5s ease,padding .5s ease,border-color .5s ease;border-bottom:1px solid transparent;}
+  header.site.stuck{background:rgba(20,11,9,0.86);backdrop-filter:blur(14px);padding:14px 0;border-bottom-color:var(--rule);}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:20px;}
+  .brand{display:flex;align-items:center;gap:11px;}
+  .brand .mark{width:26px;height:26px;flex:none;}
+  .brand .name{font-family:'Bodoni Moda',serif;font-size:1.24rem;letter-spacing:0.2em;text-transform:uppercase;}
+  .nav-links{display:flex;gap:clamp(14px,2.2vw,34px);font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:400;}
+  .nav-links a{position:relative;padding-bottom:4px;color:var(--lime-dim);transition:color .3s;}
+  .nav-links a:hover{color:var(--lime-paper);}
+  .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--amber);
+    transform:scaleX(0);transform-origin:right;transition:transform .4s cubic-bezier(.6,0,.2,1);}
+  .nav-links a:hover::after{transform:scaleX(1);transform-origin:left;}
+  .nav-right{display:flex;align-items:center;gap:16px;}
+  .lang{display:flex;border:1px solid var(--rule-strong);border-radius:2px;overflow:hidden;}
+  .lang button{padding:6px 10px;font-size:0.65rem;letter-spacing:0.14em;font-weight:500;color:var(--lime-dim);transition:.25s;}
+  .lang button.on{background:var(--lime-paper);color:var(--ash);}
+
+  .btn{display:inline-flex;align-items:center;gap:10px;font-size:0.7rem;font-weight:500;
+    letter-spacing:0.2em;text-transform:uppercase;padding:15px 28px;position:relative;}
+  .btn-fill{background:var(--wine);color:var(--lime-paper);transition:background .35s;}
+  .btn-fill:hover{background:var(--wine-lit);}
+  .btn-line{border:1px solid var(--rule-strong);transition:border-color .35s,background .35s;}
+  .btn-line:hover{border-color:var(--amber);background:rgba(224,145,58,0.08);}
+  .btn .arw{transition:transform .35s cubic-bezier(.6,0,.2,1);}
+  .btn:hover .arw{transform:translateX(6px);}
+  .magnetic{transition:transform .3s cubic-bezier(.2,.8,.2,1);}
+
+  /* -------- reveal -------- */
+  .rv{opacity:1;transform:none;}
+  @media (prefers-reduced-motion: no-preference){
+    .rv{opacity:0;transform:translateY(34px);transition:opacity 1.1s cubic-bezier(.2,.8,.2,1),transform 1.1s cubic-bezier(.2,.8,.2,1);}
+    .rv.in{opacity:1;transform:none;}
+    .rv[data-d="1"]{transition-delay:.12s;} .rv[data-d="2"]{transition-delay:.24s;} .rv[data-d="3"]{transition-delay:.36s;}
+  }
+
+  /* ==================== HERO ==================== */
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;}
+  .hero-art{position:absolute;inset:0;z-index:0;}
+  .hero-art svg{width:100%;height:100%;}
+  .hero-veil{position:absolute;inset:0;z-index:1;
+    background:radial-gradient(ellipse 70% 55% at 50% 42%,rgba(224,145,58,0.16),transparent 70%),
+               linear-gradient(180deg,rgba(20,11,9,0.72) 0%,rgba(20,11,9,0.36) 38%,rgba(20,11,9,0.95) 100%);}
+  .hero-body{position:relative;z-index:2;padding:150px 0 clamp(34px,5vw,56px);}
+  .hero-kick{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:clamp(24px,4vw,44px);}
+  .hero-stars{display:flex;align-items:center;gap:10px;font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--lime-dim);}
+  .hero-stars b{color:var(--amber);font-weight:500;}
+  h1.hero-title{font-size:clamp(3.2rem,12.5vw,10.5rem);letter-spacing:-0.015em;}
+  .hero-title .ln{display:block;overflow:hidden;}
+  .hero-title .ln > i{display:inline-block;font-style:normal;transform:translateY(112%);
+    animation:lnUp 1.15s cubic-bezier(.16,.84,.24,1) forwards;}
+  .hero-title .ln:nth-of-type(1) > i{animation-delay:1.55s;}
+  .hero-title .ln:nth-of-type(2) > i{animation-delay:1.7s;}
+  .hero-title .ln:nth-of-type(3) > i{animation-delay:1.85s;}
+  .hero-title em{font-style:italic;color:var(--amber-soft);}
+  @keyframes lnUp{to{transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){ .hero-title .ln > i{transform:none;animation:none;} }
+  .hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-top:clamp(26px,3.5vw,42px);}
+  .hero-lede{max-width:36ch;font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(1.05rem,1.5vw,1.28rem);
+    color:var(--lime-dim);line-height:1.5;}
+
+  /* reservation strip */
+  .resv{position:relative;z-index:3;background:var(--lime-paper);color:var(--ash);
+    display:grid;grid-template-columns:repeat(4,1fr) auto;border-top:3px solid var(--wine);}
+  .resv .f{padding:16px clamp(16px,2vw,26px);border-right:1px solid rgba(20,11,9,0.13);}
+  .resv .f:last-of-type{border-right:none;}
+  .resv label{display:block;font-size:0.6rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--wine);margin-bottom:5px;}
+  .resv input,.resv select{width:100%;border:none;background:none;color:var(--ash);
+    font-family:'Bodoni Moda',serif;font-size:1.02rem;}
+  .resv input:focus,.resv select:focus{outline:none;}
+  .resv-go{display:flex;}
+  .resv-go button{background:var(--ash);color:var(--lime-paper);padding:0 clamp(22px,3vw,38px);
+    font-size:0.7rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;white-space:nowrap;transition:background .35s;width:100%;justify-content:center;}
+  .resv-go button:hover{background:var(--wine);}
+  @media (max-width:900px){
+    .resv{grid-template-columns:1fr 1fr;}
+    .resv .f{border-right:none;border-bottom:1px solid rgba(20,11,9,0.13);}
+    .resv .f:nth-child(odd){border-right:1px solid rgba(20,11,9,0.13);}
+    .resv-go{grid-column:1/-1;}
+    .resv-go button{padding:20px;}
+  }
+
+  /* ==================== TICKER ==================== */
+  .ticker{background:var(--wine);color:var(--lime-paper);padding:15px 0;overflow:hidden;white-space:nowrap;}
+  .ticker .trk{display:inline-block;animation:mv 34s linear infinite;}
+  .ticker span{font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(1.05rem,2.1vw,1.55rem);padding:0 1.6rem;}
+  .ticker .dot{font-style:normal;color:var(--amber-soft);}
+  @keyframes mv{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  /* ==================== STORY ==================== */
+  .pad{padding:clamp(80px,11vw,164px) 0;}
+  .story{background:var(--ash);position:relative;overflow:hidden;}
+  .story-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:clamp(30px,6vw,90px);align-items:center;}
+  .story h2{font-size:clamp(2.4rem,5.6vw,4.6rem);margin:20px 0 26px;}
+  .story h2 em{font-style:italic;color:var(--terra);}
+  .story p{color:var(--lime-dim);max-width:46ch;margin-bottom:18px;font-size:1.02rem;}
+  .story-sign{margin-top:30px;font-family:'Bodoni Moda',serif;font-style:italic;font-size:1.3rem;color:var(--amber-soft);}
+  .story-sign small{display:block;font-family:'Jost',sans-serif;font-style:normal;font-size:0.65rem;
+    letter-spacing:0.24em;text-transform:uppercase;color:var(--lime-dim);margin-top:6px;}
+  .story-art{position:relative;}
+  .story-art svg{width:100%;height:auto;}
+  .story-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:clamp(46px,7vw,84px);
+    border-top:1px solid var(--rule);}
+  .story-facts div{padding:26px 0 0;border-right:1px solid var(--rule);padding-right:22px;}
+  .story-facts div:last-child{border-right:none;}
+  .story-facts b{display:block;font-family:'Bodoni Moda',serif;font-size:clamp(2.2rem,4.4vw,3.4rem);color:var(--amber);line-height:1;}
+  .story-facts span{display:block;margin-top:8px;font-size:0.66rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--lime-dim);}
+  @media (max-width:880px){ .story-grid{grid-template-columns:1fr;} .story-facts{grid-template-columns:1fr;}
+    .story-facts div{border-right:none;border-bottom:1px solid var(--rule);padding-bottom:22px;} }
+
+  /* ============ MENU LEDGER — scroll-driven focus band ============ */
+  .menu{background:var(--ash-2);position:relative;
+    background-image:radial-gradient(circle at 50% 0,rgba(224,145,58,0.07),transparent 60%);}
+  .menu-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;
+    margin-bottom:clamp(34px,5vw,60px);}
+  .menu-head h2{font-size:clamp(2.4rem,6vw,5rem);}
+  .menu-head h2 em{font-style:italic;color:var(--olive);}
+  .menu-note{max-width:30ch;font-size:0.86rem;color:var(--lime-dim);}
+  .ledger{display:grid;grid-template-columns:clamp(150px,20vw,250px) 1fr;gap:clamp(20px,4vw,60px);align-items:start;}
+  .courses{position:sticky;top:110px;display:flex;flex-direction:column;gap:2px;}
+  .courses button{
+    text-align:left;padding:12px 0 12px 16px;border-left:2px solid var(--rule);
+    font-size:0.74rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--lime-dim);
+    transition:color .4s,border-color .4s,padding-left .4s;
+  }
+  .courses button .cn{font-size:0.62rem;color:var(--wine-lit);display:block;margin-bottom:3px;letter-spacing:0.2em;}
+  .courses button.on{color:var(--amber);border-left-color:var(--amber);padding-left:22px;}
+  .ledger-body{border-top:1px solid var(--rule);}
+  .course-block{padding:clamp(28px,4vw,48px) 0;border-bottom:1px solid var(--rule);}
+  .course-title{font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(1.6rem,3vw,2.3rem);
+    color:var(--terra);margin-bottom:6px;}
+  .course-cap{font-size:0.76rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--lime-dim);margin-bottom:26px;}
+  .dish{
+    display:grid;grid-template-columns:1fr auto;gap:8px 20px;align-items:baseline;
+    padding:16px 0 16px 0;border-bottom:1px dashed rgba(242,228,207,0.1);
+    opacity:0.34;transition:opacity .5s ease,transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .dish:last-child{border-bottom:none;}
+  .dish.lit{opacity:1;transform:translateX(8px);}
+  .dish-name{font-family:'Bodoni Moda',serif;font-size:clamp(1.1rem,2.1vw,1.55rem);color:var(--lime-paper);}
+  .dish-price{font-family:'Bodoni Moda',serif;font-size:clamp(1rem,1.7vw,1.3rem);color:var(--amber);
+    font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .dish-desc{grid-column:1/2;font-size:0.85rem;color:var(--lime-dim);max-width:52ch;line-height:1.55;}
+  .dish-tag{display:inline-block;margin-left:10px;font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--olive);border:1px solid var(--olive);padding:2px 7px;vertical-align:middle;}
+  @media (max-width:820px){
+    .ledger{grid-template-columns:1fr;}
+    .courses{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:12px;
+      -webkit-overflow-scrolling:touch;}
+    .courses button{border-left:none;border-bottom:2px solid var(--rule);white-space:nowrap;padding:8px 14px;}
+    .courses button.on{border-left:none;border-bottom-color:var(--amber);padding-left:14px;}
+    .dish{opacity:1;}
+  }
+
+  /* ==================== ROOM / ATMOSPHERE ==================== */
+  .room{background:var(--ash);}
+  .room-head{max-width:56ch;margin-bottom:clamp(34px,5vw,60px);}
+  .room-head h2{font-size:clamp(2.2rem,5.4vw,4.4rem);margin:18px 0 18px;}
+  .room-head p{color:var(--lime-dim);}
+  .room-mosaic{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:clamp(80px,10vw,132px);gap:10px;}
+  .tile{position:relative;overflow:hidden;background:var(--ash-3);}
+  .tile svg{width:100%;height:100%;transition:transform .9s cubic-bezier(.2,.8,.2,1);}
+  .tile:hover svg{transform:scale(1.07);}
+  .tile figcaption{position:absolute;left:18px;bottom:16px;z-index:2;
+    font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--lime-paper);
+    text-shadow:0 2px 12px rgba(20,11,9,0.9);}
+  .tile::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,transparent 48%,rgba(20,11,9,0.8) 100%);}
+  .t-a{grid-column:span 7;grid-row:span 3;}
+  .t-b{grid-column:span 5;grid-row:span 2;}
+  .t-c{grid-column:span 5;grid-row:span 1;}
+  .t-d{grid-column:span 4;grid-row:span 2;}
+  .t-e{grid-column:span 4;grid-row:span 2;}
+  .t-f{grid-column:span 4;grid-row:span 2;}
+  @media (max-width:820px){
+    .room-mosaic{grid-template-columns:repeat(2,1fr);grid-auto-rows:120px;}
+    .t-a{grid-column:span 2;grid-row:span 3;}
+    .t-b,.t-c,.t-d,.t-e,.t-f{grid-column:span 2;grid-row:span 2;}
+  }
+
+  /* ==================== REVIEWS ==================== */
+  .rev{background:var(--ash-3);position:relative;overflow:hidden;}
+  .rev-top{display:grid;grid-template-columns:auto 1fr;gap:clamp(26px,5vw,64px);align-items:center;
+    margin-bottom:clamp(38px,5vw,64px);}
+  .score{display:flex;align-items:baseline;gap:8px;}
+  .score b{font-family:'Bodoni Moda',serif;font-size:clamp(4rem,11vw,8rem);color:var(--amber);line-height:0.85;
+    font-variant-numeric:tabular-nums;}
+  .score small{font-family:'Bodoni Moda',serif;font-size:1.6rem;color:var(--lime-dim);}
+  .score-meta{font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--lime-dim);line-height:2;}
+  .score-meta b{color:var(--lime-paper);font-weight:500;}
+  .rev-rail{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px;}
+  .rev-rail::-webkit-scrollbar{height:3px;}
+  .rev-rail::-webkit-scrollbar-track{background:var(--rule);}
+  .rev-rail::-webkit-scrollbar-thumb{background:var(--amber);}
+  .rev-card{scroll-snap-align:start;flex:0 0 min(84vw,400px);background:var(--ash);
+    border:1px solid var(--rule);padding:30px;display:flex;flex-direction:column;gap:18px;}
+  .rev-stars{color:var(--amber);letter-spacing:4px;font-size:0.9rem;}
+  .rev-q{font-family:'Bodoni Moda',serif;font-style:italic;font-size:1.08rem;line-height:1.55;}
+  .rev-who{margin-top:auto;padding-top:16px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;font-size:0.64rem;letter-spacing:0.16em;
+    text-transform:uppercase;color:var(--lime-dim);}
+
+  /* ==================== BOOK CTA ==================== */
+  .book{position:relative;min-height:88svh;display:flex;align-items:center;overflow:hidden;background:var(--ash);}
+  .book-art{position:absolute;inset:0;}
+  .book-art svg{width:100%;height:100%;}
+  .book-in{position:relative;z-index:2;width:100%;text-align:center;padding:clamp(70px,10vw,120px) 0;}
+  .book h2{font-size:clamp(2.8rem,9vw,7.2rem);}
+  .book h2 em{font-style:italic;color:var(--amber-soft);}
+  .book p{font-family:'Bodoni Moda',serif;font-style:italic;color:var(--lime-dim);
+    font-size:clamp(1rem,1.6vw,1.24rem);max-width:42ch;margin:22px auto 36px;}
+  .book-acts{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .book-hours{margin-top:44px;display:flex;justify-content:center;gap:clamp(20px,4vw,56px);flex-wrap:wrap;
+    font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--lime-dim);}
+  .book-hours b{display:block;color:var(--amber);font-weight:500;margin-top:5px;font-variant-numeric:tabular-nums;}
+
+  /* ==================== LOCATION ==================== */
+  .loc{background:var(--ash-2);}
+  .loc-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(28px,5vw,70px);align-items:center;}
+  .loc h2{font-size:clamp(2.2rem,5vw,3.8rem);margin:18px 0 26px;}
+  .loc-rows{display:flex;flex-direction:column;}
+  .loc-rows div{display:flex;justify-content:space-between;gap:18px;padding:16px 0;border-bottom:1px solid var(--rule);}
+  .loc-rows dt{font-size:0.66rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--lime-dim);flex:none;}
+  .loc-rows dd{font-family:'Bodoni Moda',serif;font-size:1.05rem;text-align:right;}
+  .loc-map{border:1px solid var(--rule);overflow:hidden;}
+  .loc-map svg{width:100%;height:auto;}
+  @media (max-width:880px){ .loc-grid{grid-template-columns:1fr;} }
+
+  /* ==================== FOOTER ==================== */
+  footer{background:var(--ash);border-top:1px solid var(--rule);padding:clamp(56px,7vw,88px) 0 28px;}
+  .foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:36px;padding-bottom:44px;}
+  .foot-brand p{color:var(--lime-dim);max-width:32ch;margin-top:14px;font-size:0.9rem;}
+  .foot h4{font-size:0.64rem;letter-spacing:0.24em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;font-family:'Jost',sans-serif;font-weight:500;}
+  .foot a,.foot p.li{display:block;font-size:0.92rem;color:var(--lime-dim);margin-bottom:9px;transition:color .3s;}
+  .foot a:hover{color:var(--amber);}
+  .foot .big{font-family:'Bodoni Moda',serif;font-size:1.18rem;color:var(--lime-paper);}
+  .foot-end{border-top:1px solid var(--rule);padding-top:22px;display:flex;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;font-size:0.72rem;color:var(--lime-dim);}
+  .demo-note{color:var(--wine-lit);}
+  @media (max-width:820px){
+    .nav-links{display:none;}
+    .foot{grid-template-columns:1fr 1fr;}
+  }
+
+  /* -------- i18n -------- */
+  [data-i18n-ru]{display:none;}
+  [data-lang="ru"] [data-i18n-ru]{display:revert;}
+  [data-lang="ru"] [data-i18n-uz]{display:none;}
+</style>
+
+<div id="loader">
+  <div class="loader-inner">
+    <svg class="loader-flame" viewBox="0 0 44 64" aria-hidden="true">
+      <g class="fl">
+        <path d="M22 4C22 4 33 20 33 34a11 11 0 0 1-22 0C11 22 22 4 22 4Z" fill="#e0913a"/>
+        <path d="M22 20c0 0 6 9 6 16a6 6 0 0 1-12 0c0-7 6-16 6-16Z" fill="#f0c187"/>
+      </g>
+      <rect x="18" y="46" width="8" height="16" fill="#f2e4cf"/>
+    </svg>
+    <div class="loader-word">
+      <span style="animation-delay:.1s">A</span><span style="animation-delay:.17s">F</span><span style="animation-delay:.24s">F</span><span style="animation-delay:.31s">R</span><span style="animation-delay:.38s">E</span><span style="animation-delay:.45s">S</span><span style="animation-delay:.52s">C</span><span style="animation-delay:.59s">O</span>
+    </div>
+    <div class="loader-sub">Ristorante &middot; Toshkent</div>
+  </div>
+</div>
+
+<div id="cursor" aria-hidden="true"></div>
+<div id="progress" aria-hidden="true"></div>
+
+<!-- ================= NAV ================= -->
+<header class="site" id="siteHead">
+  <div class="wrap nav">
+    <a href="#top" class="brand" aria-label="Affresco Ristorante">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="15" fill="none" stroke="#8f1d2c" stroke-width="1.5"/>
+        <path d="M16 6c4 4 4 9 0 13-4-4-4-9 0-13Z" fill="#5c6b3c"/>
+        <path d="M16 19v7" stroke="#e0913a" stroke-width="1.5"/>
+      </svg>
+      <span class="name">Affresco</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#story" data-i18n-uz>Biz haqimizda</a><a href="#story" data-i18n-ru>О нас</a>
+      <a href="#menu" data-i18n-uz>Menyu</a><a href="#menu" data-i18n-ru>Меню</a>
+      <a href="#room" data-i18n-uz>Zal</a><a href="#room" data-i18n-ru>Зал</a>
+      <a href="#reviews" data-i18n-uz>Sharhlar</a><a href="#reviews" data-i18n-ru>Отзывы</a>
+      <a href="#location" data-i18n-uz>Manzil</a><a href="#location" data-i18n-ru>Адрес</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang" role="group" aria-label="Til / Язык">
+        <button type="button" data-lang-btn="uz" class="on">UZ</button>
+        <button type="button" data-lang-btn="ru">RU</button>
+      </div>
+      <a href="#book" class="btn btn-fill magnetic">
+        <span data-i18n-uz>Stol band qilish</span><span data-i18n-ru>Забронировать</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<span id="top"></span>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-art" aria-hidden="true">
+    <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="roomG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2a1916"/><stop offset="55%" stop-color="#1a0f0c"/><stop offset="100%" stop-color="#120907"/>
+        </linearGradient>
+        <radialGradient id="candleG" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#f0c187" stop-opacity="0.85"/>
+          <stop offset="45%" stop-color="#e0913a" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="#e0913a" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="clothG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f2e4cf" stop-opacity="0.16"/><stop offset="100%" stop-color="#f2e4cf" stop-opacity="0.03"/>
+        </linearGradient>
+      </defs>
+      <rect width="1600" height="1000" fill="url(#roomG)"/>
+      <!-- arched windows of the dining room -->
+      <g opacity="0.35">
+        <path d="M180 700V430a90 90 0 0 1 180 0v270Z" fill="#8f1d2c" opacity="0.3"/>
+        <path d="M180 700V430a90 90 0 0 1 180 0v270Z" fill="none" stroke="#c96f4a" stroke-width="3"/>
+        <path d="M1240 700V430a90 90 0 0 1 180 0v270Z" fill="#8f1d2c" opacity="0.3"/>
+        <path d="M1240 700V430a90 90 0 0 1 180 0v270Z" fill="none" stroke="#c96f4a" stroke-width="3"/>
+      </g>
+      <!-- ceramic tile band -->
+      <g opacity="0.5">
+        <rect y="712" width="1600" height="6" fill="#c96f4a" opacity="0.5"/>
+        <g fill="#5c6b3c" opacity="0.5">
+          <path d="M60 740l24 24-24 24-24-24z"/><path d="M180 740l24 24-24 24-24-24z"/><path d="M300 740l24 24-24 24-24-24z"/>
+          <path d="M420 740l24 24-24 24-24-24z"/><path d="M540 740l24 24-24 24-24-24z"/><path d="M660 740l24 24-24 24-24-24z"/>
+          <path d="M780 740l24 24-24 24-24-24z"/><path d="M900 740l24 24-24 24-24-24z"/><path d="M1020 740l24 24-24 24-24-24z"/>
+          <path d="M1140 740l24 24-24 24-24-24z"/><path d="M1260 740l24 24-24 24-24-24z"/><path d="M1380 740l24 24-24 24-24-24z"/>
+          <path d="M1500 740l24 24-24 24-24-24z"/>
+        </g>
+        <g fill="#8f1d2c" opacity="0.45">
+          <path d="M120 740l24 24-24 24-24-24z"/><path d="M240 740l24 24-24 24-24-24z"/><path d="M360 740l24 24-24 24-24-24z"/>
+          <path d="M480 740l24 24-24 24-24-24z"/><path d="M600 740l24 24-24 24-24-24z"/><path d="M720 740l24 24-24 24-24-24z"/>
+          <path d="M840 740l24 24-24 24-24-24z"/><path d="M960 740l24 24-24 24-24-24z"/><path d="M1080 740l24 24-24 24-24-24z"/>
+          <path d="M1200 740l24 24-24 24-24-24z"/><path d="M1320 740l24 24-24 24-24-24z"/><path d="M1440 740l24 24-24 24-24-24z"/>
+        </g>
+      </g>
+      <!-- dressed table in foreground -->
+      <ellipse cx="800" cy="880" rx="520" ry="120" fill="url(#clothG)"/>
+      <!-- candle glows -->
+      <circle cx="800" cy="600" r="300" fill="url(#candleG)"/>
+      <circle cx="470" cy="820" r="170" fill="url(#candleG)" opacity="0.65"/>
+      <circle cx="1130" cy="810" r="150" fill="url(#candleG)" opacity="0.55"/>
+      <!-- candles -->
+      <g>
+        <rect x="792" y="600" width="16" height="86" fill="#f2e4cf" opacity="0.9"/>
+        <path d="M800 566c0 0 12 18 12 28a12 12 0 0 1-24 0c0-10 12-28 12-28Z" fill="#e0913a"/>
+        <path d="M800 582c0 0 6 9 6 15a6 6 0 0 1-12 0c0-6 6-15 6-15Z" fill="#f0c187"/>
+        <rect x="463" y="800" width="13" height="66" fill="#f2e4cf" opacity="0.8"/>
+        <path d="M469.5 774c0 0 10 15 10 23a10 10 0 0 1-20 0c0-8 10-23 10-23Z" fill="#e0913a"/>
+        <rect x="1124" y="792" width="13" height="66" fill="#f2e4cf" opacity="0.8"/>
+        <path d="M1130.5 766c0 0 10 15 10 23a10 10 0 0 1-20 0c0-8 10-23 10-23Z" fill="#e0913a"/>
+      </g>
+      <!-- wine glasses -->
+      <g stroke="#f2e4cf" stroke-opacity="0.35" fill="none" stroke-width="2.5">
+        <path d="M620 812c0 26 14 42 30 42s30-16 30-42Z"/><path d="M650 854v34"/><path d="M628 888h44"/>
+        <path d="M930 806c0 26 14 42 30 42s30-16 30-42Z"/><path d="M960 848v34"/><path d="M938 882h44"/>
+      </g>
+      <path d="M622 828c8 20 22 26 28 26s20-6 28-26Z" fill="#8f1d2c" opacity="0.75"/>
+      <path d="M932 822c8 20 22 26 28 26s20-6 28-26Z" fill="#8f1d2c" opacity="0.75"/>
+      <!-- olive branch, top left -->
+      <g stroke="#5c6b3c" stroke-width="3" fill="none" opacity="0.75">
+        <path d="M-10 140C120 120 240 180 350 150"/>
+      </g>
+      <g fill="#5c6b3c" opacity="0.7">
+        <ellipse cx="70" cy="118" rx="26" ry="12" transform="rotate(-22 70 118)"/>
+        <ellipse cx="150" cy="150" rx="26" ry="12" transform="rotate(14 150 150)"/>
+        <ellipse cx="230" cy="152" rx="26" ry="12" transform="rotate(-18 230 152)"/>
+        <ellipse cx="310" cy="132" rx="26" ry="12" transform="rotate(10 310 132)"/>
+      </g>
+      <circle cx="196" cy="126" r="9" fill="#c96f4a"/><circle cx="272" cy="170" r="9" fill="#c96f4a"/>
+    </svg>
+  </div>
+  <div class="hero-veil" aria-hidden="true"></div>
+
+  <div class="hero-body wrap">
+    <div class="hero-kick">
+      <span class="label rule-label"><span data-i18n-uz>Sitsiliya oshxonasi &middot; 2009-yildan beri</span><span data-i18n-ru>Сицилийская кухня &middot; с 2009 года</span></span>
+      <span class="hero-stars">
+        <b class="num">4.1</b> &#9733;&#9733;&#9733;&#9733;&#9734;
+        <span data-i18n-uz>&middot; TripAdvisor'da 119 sharh</span><span data-i18n-ru>&middot; 119 отзывов на TripAdvisor</span>
+      </span>
+    </div>
+
+    <h1 class="hero-title">
+      <span class="ln" data-i18n-uz><i>SITSILIYA</i></span>
+      <span class="ln" data-i18n-uz><i><em>sham</em> yorug'ida</i></span>
+      <span class="ln" data-i18n-uz><i>BOBUR 14.</i></span>
+      <span class="ln" data-i18n-ru><i>СИЦИЛИЯ</i></span>
+      <span class="ln" data-i18n-ru><i>при <em>свечах</em></i></span>
+      <span class="ln" data-i18n-ru><i>БАБУРА 14.</i></span>
+    </h1>
+
+    <div class="hero-foot">
+      <p class="hero-lede">
+        <span data-i18n-uz>Yakkasaroyda, o'n besh yildan beri &mdash; qirq besh o'rindiq, ochiq olov, va shoshilmaslikka asoslangan oshxona.</span>
+        <span data-i18n-ru>В Яккасарае уже пятнадцать лет &mdash; сорок пять мест, открытый огонь и кухня, которая не терпит спешки.</span>
+      </p>
+      <a href="#menu" class="btn btn-line magnetic">
+        <span data-i18n-uz>Menyuni ko'rish</span><span data-i18n-ru>Смотреть меню</span><span class="arw">&rarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <form class="resv" id="book" onsubmit="return false;">
+    <div class="f">
+      <label for="rv-date" data-i18n-uz>Sana</label><label for="rv-date" data-i18n-ru>Дата</label>
+      <input id="rv-date" type="date" value="2026-09-12">
+    </div>
+    <div class="f">
+      <label for="rv-time" data-i18n-uz>Vaqt</label><label for="rv-time" data-i18n-ru>Время</label>
+      <input id="rv-time" type="time" value="19:30">
+    </div>
+    <div class="f">
+      <label for="rv-guests" data-i18n-uz>Mehmonlar</label><label for="rv-guests" data-i18n-ru>Гостей</label>
+      <select id="rv-guests">
+        <option>2</option><option>3</option><option>4</option><option>6</option><option>8</option>
+      </select>
+    </div>
+    <div class="f">
+      <label for="rv-zone" data-i18n-uz>Zal</label><label for="rv-zone" data-i18n-ru>Зона</label>
+      <select id="rv-zone">
+        <option data-i18n-uz>Asosiy zal</option><option data-i18n-ru>Основной зал</option>
+        <option data-i18n-uz>Terrasa</option><option data-i18n-ru>Терраса</option>
+        <option data-i18n-uz>Vino xonasi</option><option data-i18n-ru>Винная комната</option>
+      </select>
+    </div>
+    <div class="resv-go">
+      <button type="button" data-demo-msg>
+        <span data-i18n-uz>Joyni tasdiqlash</span><span data-i18n-ru>Подтвердить бронь</span>
+        <span class="arw">&rarr;</span>
+      </button>
+    </div>
+  </form>
+</section>
+
+<!-- ================= TICKER ================= -->
+<div class="ticker" aria-hidden="true">
+  <div class="trk">
+    <span data-i18n-uz>Palermo</span><span data-i18n-ru>Палермо</span><span class="dot">&#9670;</span>
+    <span data-i18n-uz>o'tin olovi</span><span data-i18n-ru>дровяная печь</span><span class="dot">&#9670;</span>
+    <span data-i18n-uz>qo'lda yoyilgan xamir</span><span data-i18n-ru>тесто вручную</span><span class="dot">&#9670;</span>
+    <span data-i18n-uz>Sitsiliya vinolari</span><span data-i18n-ru>вина Сицилии</span><span class="dot">&#9670;</span>
+    <span data-i18n-uz>Palermo</span><span data-i18n-ru>Палермо</span><span class="dot">&#9670;</span>
+    <span data-i18n-uz>o'tin olovi</span><span data-i18n-ru>дровяная печь</span><span class="dot">&#9670;</span>
+    <span data-i18n-uz>qo'lda yoyilgan xamir</span><span data-i18n-ru>тесто вручную</span><span class="dot">&#9670;</span>
+    <span data-i18n-uz>Sitsiliya vinolari</span><span data-i18n-ru>вина Сицилии</span><span class="dot">&#9670;</span>
+  </div>
+</div>
+
+<!-- ================= STORY ================= -->
+<section class="story pad" id="story">
+  <div class="wrap">
+    <div class="story-grid">
+      <div class="rv">
+        <span class="label rule-label"><span data-i18n-uz>Oshxona</span><span data-i18n-ru>Кухня</span></span>
+        <h2>
+          <span data-i18n-uz>Bitta o'choq,<br><em>oltita</em> qo'l.</span>
+          <span data-i18n-ru>Одна печь,<br><em>шесть</em> рук.</span>
+        </h2>
+        <p data-i18n-uz>Affresco 2009-yilda ochilgan &mdash; o'sha paytda Toshkentda haqiqiy sitsiliyacha oshxona deyarli yo'q edi. Biz o'shandan beri bir xil narsani qilamiz: kuniga ikki marta xamir yoyamiz, sousni uch soat qaynatamiz va hech qachon muzlatilgan dengiz mahsulotini ishlatmaymiz.</p>
+        <p data-i18n-ru>Affresco открылся в 2009 году &mdash; тогда настоящей сицилийской кухни в Ташкенте почти не было. С тех пор мы делаем одно и то же: замешиваем тесто дважды в день, тушим соус три часа и никогда не берём замороженные морепродукты.</p>
+        <p data-i18n-uz>Zalda qirq besh o'rindiq bor. Bu ataylab: har bir stolni ko'rish, har bir taomni o'z vaqtida chiqarish uchun.</p>
+        <p data-i18n-ru>В зале сорок пять мест. Это осознанно: чтобы видеть каждый стол и подавать каждое блюдо вовремя.</p>
+        <div class="story-sign">
+          <span data-i18n-uz>&laquo;Sitsiliyada retsept yo'q &mdash; odat bor.&raquo;</span>
+          <span data-i18n-ru>&laquo;На Сицилии нет рецептов &mdash; есть привычка.&raquo;</span>
+          <small data-i18n-uz>Osh xonasi jamoasi</small><small data-i18n-ru>Команда кухни</small>
+        </div>
+      </div>
+
+      <div class="story-art rv" data-d="1" aria-hidden="true">
+        <svg viewBox="0 0 620 720">
+          <defs>
+            <linearGradient id="stG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2a1916"/><stop offset="100%" stop-color="#120907"/>
+            </linearGradient>
+            <radialGradient id="ovenG" cx="50%" cy="55%" r="55%">
+              <stop offset="0%" stop-color="#f0c187"/><stop offset="45%" stop-color="#e0913a"/>
+              <stop offset="100%" stop-color="#8f1d2c" stop-opacity="0.2"/>
+            </radialGradient>
+          </defs>
+          <rect width="620" height="720" fill="url(#stG)"/>
+          <rect x="30" y="30" width="560" height="660" fill="none" stroke="#c96f4a" stroke-width="1.5" opacity="0.4"/>
+          <!-- brick oven arch -->
+          <path d="M150 520V330a160 160 0 0 1 320 0v190Z" fill="#2a1916" stroke="#c96f4a" stroke-width="3"/>
+          <path d="M200 520V345a110 110 0 0 1 220 0v175Z" fill="url(#ovenG)"/>
+          <!-- brick courses -->
+          <g stroke="#c96f4a" stroke-opacity="0.35" stroke-width="1.5">
+            <path d="M150 440h50M420 440h50M150 380h60M410 380h60"/>
+          </g>
+          <!-- fire -->
+          <path d="M310 470c0 0 26-40 26-64a26 26 0 0 0-52 0c0 24 26 64 26 64Z" fill="#8f1d2c" opacity="0.55" transform="rotate(180 310 438)"/>
+          <path d="M310 500c-18 0-32-13-32-30 0-22 32-56 32-56s32 34 32 56c0 17-14 30-32 30Z" fill="#e0913a"/>
+          <path d="M310 494c-10 0-18-8-18-18 0-13 18-33 18-33s18 20 18 33c0 10-8 18-18 18Z" fill="#f0c187"/>
+          <!-- hearth base -->
+          <rect x="130" y="520" width="360" height="20" fill="#c96f4a" opacity="0.55"/>
+          <!-- peel with pizza -->
+          <g>
+            <rect x="470" y="560" width="120" height="9" rx="4" fill="#cbb9a0" opacity="0.6" transform="rotate(-14 470 560)"/>
+            <circle cx="200" cy="600" r="62" fill="#f2e4cf" opacity="0.9"/>
+            <circle cx="200" cy="600" r="52" fill="#c96f4a"/>
+            <circle cx="180" cy="586" r="9" fill="#f2e4cf"/><circle cx="216" cy="612" r="9" fill="#f2e4cf"/>
+            <circle cx="206" cy="574" r="8" fill="#5c6b3c"/><circle cx="176" cy="618" r="8" fill="#5c6b3c"/>
+          </g>
+          <!-- hanging herbs -->
+          <g stroke="#5c6b3c" stroke-width="2.5" opacity="0.8">
+            <path d="M520 90v90M552 90v70"/>
+          </g>
+          <g fill="#5c6b3c" opacity="0.7">
+            <ellipse cx="510" cy="120" rx="14" ry="7" transform="rotate(-30 510 120)"/>
+            <ellipse cx="532" cy="146" rx="14" ry="7" transform="rotate(28 532 146)"/>
+            <ellipse cx="508" cy="166" rx="14" ry="7" transform="rotate(-24 508 166)"/>
+            <ellipse cx="562" cy="128" rx="12" ry="6" transform="rotate(26 562 128)"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <dl class="story-facts rv" data-d="2">
+      <div><b class="num">15+</b><span data-i18n-uz>Yil Toshkentda</span><span data-i18n-ru>Лет в Ташкенте</span></div>
+      <div><b class="num">45</b><span data-i18n-uz>O'rindiq</span><span data-i18n-ru>Посадочных мест</span></div>
+      <div><b class="num">#65</b><span data-i18n-uz>627 restoran ichida</span><span data-i18n-ru>Из 627 ресторанов</span></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= MENU LEDGER ================= -->
+<section class="menu pad" id="menu">
+  <div class="wrap">
+    <div class="menu-head rv">
+      <div>
+        <span class="label rule-label"><span data-i18n-uz>Menyu</span><span data-i18n-ru>Меню</span></span>
+        <h2>
+          <span data-i18n-uz>Kechki <em>taomnoma</em></span>
+          <span data-i18n-ru>Вечерняя <em>карта</em></span>
+        </h2>
+      </div>
+      <p class="menu-note">
+        <span data-i18n-uz>Menyu mavsumga qarab o'zgaradi. Narxlar so'mda, xizmat haqi kiritilmagan.</span>
+        <span data-i18n-ru>Меню меняется по сезону. Цены в сумах, сервисный сбор не включён.</span>
+      </p>
+    </div>
+
+    <div class="ledger">
+      <nav class="courses" id="courses" aria-label="Menu courses">
+        <button type="button" data-goto="c1" class="on"><span class="cn num">I</span><span data-i18n-uz>Antipasti</span><span data-i18n-ru>Антипасти</span></button>
+        <button type="button" data-goto="c2"><span class="cn num">II</span><span data-i18n-uz>Primi</span><span data-i18n-ru>Примi</span></button>
+        <button type="button" data-goto="c3"><span class="cn num">III</span><span data-i18n-uz>Secondi</span><span data-i18n-ru>Секонди</span></button>
+        <button type="button" data-goto="c4"><span class="cn num">IV</span><span data-i18n-uz>Dolci</span><span data-i18n-ru>Дольчи</span></button>
+      </nav>
+
+      <div class="ledger-body">
+        <div class="course-block" id="c1">
+          <h3 class="course-title"><span data-i18n-uz>Antipasti</span><span data-i18n-ru>Антипасти</span></h3>
+          <p class="course-cap"><span data-i18n-uz>Boshlanish &mdash; sovuq va issiq</span><span data-i18n-ru>Начало &mdash; холодные и горячие</span></p>
+
+          <div class="dish">
+            <span class="dish-name">Caponata siciliana</span>
+            <span class="dish-price num">78 000</span>
+            <p class="dish-desc" data-i18n-uz>Baqlajon, seldereya, kapers va uzum sirkasi &mdash; xona haroratida, non bilan.</p>
+            <p class="dish-desc" data-i18n-ru>Баклажан, сельдерей, каперсы и винный уксус &mdash; комнатной температуры, с хлебом.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Burrata &amp; pomodorini<span class="dish-tag">Puglia</span></span>
+            <span class="dish-price num">126 000</span>
+            <p class="dish-desc" data-i18n-uz>Butun burrata, qovurilgan cherri pomidor, rayhon va zaytun moyi.</p>
+            <p class="dish-desc" data-i18n-ru>Целая буррата, запечённые черри, базилик и оливковое масло.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Arancini al rag&ugrave;</span>
+            <span class="dish-price num">68 000</span>
+            <p class="dish-desc" data-i18n-uz>Uchta klassik palermocha guruch shari &mdash; ragu va mozzarella bilan.</p>
+            <p class="dish-desc" data-i18n-ru>Три классических палермских рисовых шарика &mdash; с рагу и моцареллой.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Carpaccio di manzo</span>
+            <span class="dish-price num">112 000</span>
+            <p class="dish-desc" data-i18n-uz>Nozik kesilgan mol go'shti, rukola, parmezan va limon.</p>
+            <p class="dish-desc" data-i18n-ru>Тонко нарезанная говядина, руккола, пармезан и лимон.</p>
+          </div>
+        </div>
+
+        <div class="course-block" id="c2">
+          <h3 class="course-title"><span data-i18n-uz>Primi</span><span data-i18n-ru>Примi</span></h3>
+          <p class="course-cap"><span data-i18n-uz>Xamir &mdash; har kuni ertalab qo'lda</span><span data-i18n-ru>Паста &mdash; каждое утро вручную</span></p>
+
+          <div class="dish">
+            <span class="dish-name">Pasta alla Norma<span class="dish-tag">Catania</span></span>
+            <span class="dish-price num">94 000</span>
+            <p class="dish-desc" data-i18n-uz>Qovurilgan baqlajon, pomidor sousi, rayhon va tuzlangan ricotta.</p>
+            <p class="dish-desc" data-i18n-ru>Жареный баклажан, томатный соус, базилик и солёная рикотта.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Spaghetti alle vongole</span>
+            <span class="dish-price num">148 000</span>
+            <p class="dish-desc" data-i18n-uz>Vongole, oq vino, sarimsoq va achchiq qalampir. Pishloqsiz &mdash; shunday to'g'ri.</p>
+            <p class="dish-desc" data-i18n-ru>Вонголе, белое вино, чеснок и острый перец. Без сыра &mdash; так правильно.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Risotto ai funghi</span>
+            <span class="dish-price num">108 000</span>
+            <p class="dish-desc" data-i18n-uz>Carnaroli guruchi, mavsumiy qo'ziqorin, oq vino va parmezan.</p>
+            <p class="dish-desc" data-i18n-ru>Рис карнароли, сезонные грибы, белое вино и пармезан.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Lasagna della casa</span>
+            <span class="dish-price num">98 000</span>
+            <p class="dish-desc" data-i18n-uz>Uch soat qaynagan ragu, beshamel va qo'lda yoyilgan qatlamlar.</p>
+            <p class="dish-desc" data-i18n-ru>Рагу, томившееся три часа, бешамель и раскатанные вручную слои.</p>
+          </div>
+        </div>
+
+        <div class="course-block" id="c3">
+          <h3 class="course-title"><span data-i18n-uz>Secondi</span><span data-i18n-ru>Секонди</span></h3>
+          <p class="course-cap"><span data-i18n-uz>Ochiq olovda &mdash; baliq va go'sht</span><span data-i18n-ru>На открытом огне &mdash; рыба и мясо</span></p>
+
+          <div class="dish">
+            <span class="dish-name">Branzino al sale</span>
+            <span class="dish-price num">198 000</span>
+            <p class="dish-desc" data-i18n-uz>Butun dengiz karpi, tuz qobig'ida pishirilgan, stolda ochiladi.</p>
+            <p class="dish-desc" data-i18n-ru>Целый сибас, запечённый в соляной корке, вскрывается при вас.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Tagliata di manzo</span>
+            <span class="dish-price num">224 000</span>
+            <p class="dish-desc" data-i18n-uz>Mol filesi, rukola va parmezan, balzamik qaymog'i bilan.</p>
+            <p class="dish-desc" data-i18n-ru>Говяжья вырезка, руккола и пармезан, с бальзамическим кремом.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Pollo alla siciliana</span>
+            <span class="dish-price num">138 000</span>
+            <p class="dish-desc" data-i18n-uz>Tovuq soni, limon, zaytun va rozmarin &mdash; sekin pishirilgan.</p>
+            <p class="dish-desc" data-i18n-ru>Куриное бедро, лимон, оливки и розмарин &mdash; медленного томления.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Gamberoni alla griglia</span>
+            <span class="dish-price num">186 000</span>
+            <p class="dish-desc" data-i18n-uz>Yirik qizil krevetkalar, sarimsoq moyi va limon.</p>
+            <p class="dish-desc" data-i18n-ru>Крупные красные креветки, чесночное масло и лимон.</p>
+          </div>
+        </div>
+
+        <div class="course-block" id="c4">
+          <h3 class="course-title"><span data-i18n-uz>Dolci</span><span data-i18n-ru>Дольчи</span></h3>
+          <p class="course-cap"><span data-i18n-uz>Yakun &mdash; kofe bilan</span><span data-i18n-ru>Финал &mdash; к кофе</span></p>
+
+          <div class="dish">
+            <span class="dish-name">Cannoli siciliani</span>
+            <span class="dish-price num">54 000</span>
+            <p class="dish-desc" data-i18n-uz>Ikkita quvurcha, buyurtma bilan to'ldiriladi &mdash; ricotta va pista.</p>
+            <p class="dish-desc" data-i18n-ru>Две трубочки, наполняются под заказ &mdash; рикотта и фисташка.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Tiramis&ugrave; classico</span>
+            <span class="dish-price num">58 000</span>
+            <p class="dish-desc" data-i18n-uz>Mascarpone, savoiardi va bizning espresso.</p>
+            <p class="dish-desc" data-i18n-ru>Маскарпоне, савоярди и наш эспрессо.</p>
+          </div>
+          <div class="dish">
+            <span class="dish-name">Granita al limone</span>
+            <span class="dish-price num">42 000</span>
+            <p class="dish-desc" data-i18n-uz>Limon granitasi &mdash; yozgi Sitsiliyaning eng oddiy javobi.</p>
+            <p class="dish-desc" data-i18n-ru>Лимонная гранита &mdash; самый простой ответ сицилийского лета.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROOM ================= -->
+<section class="room pad" id="room">
+  <div class="wrap">
+    <div class="room-head rv">
+      <span class="label rule-label"><span data-i18n-uz>Zal</span><span data-i18n-ru>Зал</span></span>
+      <h2><span data-i18n-uz>Kechqurun bu yerda sham yoqiladi.</span><span data-i18n-ru>По вечерам здесь зажигают свечи.</span></h2>
+      <p data-i18n-uz>Terrakota devorlar, sitsiliyacha keramika, past yorug'lik. Uchta zona: asosiy zal, yozgi terrasa va oltita kishilik vino xonasi.</p>
+      <p data-i18n-ru>Терракотовые стены, сицилийская керамика, приглушённый свет. Три зоны: основной зал, летняя терраса и винная комната на шестерых.</p>
+    </div>
+
+    <div class="room-mosaic rv" data-d="1">
+      <figure class="tile t-a">
+        <svg viewBox="0 0 700 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs><linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3a231d"/><stop offset="100%" stop-color="#150c0a"/></linearGradient></defs>
+          <rect width="700" height="420" fill="url(#m1)"/>
+          <g opacity="0.6">
+            <path d="M90 300V190a56 56 0 0 1 112 0v110Z" fill="none" stroke="#c96f4a" stroke-width="3"/>
+            <path d="M300 300V190a56 56 0 0 1 112 0v110Z" fill="none" stroke="#c96f4a" stroke-width="3"/>
+            <path d="M510 300V190a56 56 0 0 1 112 0v110Z" fill="none" stroke="#c96f4a" stroke-width="3"/>
+          </g>
+          <rect y="300" width="700" height="6" fill="#8f1d2c" opacity="0.6"/>
+          <g fill="#e0913a" opacity="0.9">
+            <circle cx="146" cy="250" r="34" opacity="0.25"/><circle cx="356" cy="250" r="34" opacity="0.25"/><circle cx="566" cy="250" r="34" opacity="0.25"/>
+            <rect x="142" y="246" width="8" height="30"/><rect x="352" y="246" width="8" height="30"/><rect x="562" y="246" width="8" height="30"/>
+            <path d="M146 228c0 0 8 12 8 19a8 8 0 0 1-16 0c0-7 8-19 8-19Z"/>
+            <path d="M356 228c0 0 8 12 8 19a8 8 0 0 1-16 0c0-7 8-19 8-19Z"/>
+            <path d="M566 228c0 0 8 12 8 19a8 8 0 0 1-16 0c0-7 8-19 8-19Z"/>
+          </g>
+          <rect y="340" width="700" height="80" fill="#f2e4cf" opacity="0.08"/>
+        </svg>
+        <figcaption><span data-i18n-uz>Asosiy zal</span><span data-i18n-ru>Основной зал</span></figcaption>
+      </figure>
+
+      <figure class="tile t-b">
+        <svg viewBox="0 0 500 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="500" height="280" fill="#1f1210"/>
+          <g fill="#5c6b3c" opacity="0.6">
+            <path d="M40 40l22 22-22 22-22-22z"/><path d="M100 40l22 22-22 22-22-22z"/><path d="M160 40l22 22-22 22-22-22z"/>
+            <path d="M220 40l22 22-22 22-22-22z"/><path d="M280 40l22 22-22 22-22-22z"/><path d="M340 40l22 22-22 22-22-22z"/>
+            <path d="M400 40l22 22-22 22-22-22z"/><path d="M460 40l22 22-22 22-22-22z"/>
+          </g>
+          <g fill="#8f1d2c" opacity="0.55">
+            <path d="M70 84l22 22-22 22-22-22z"/><path d="M130 84l22 22-22 22-22-22z"/><path d="M190 84l22 22-22 22-22-22z"/>
+            <path d="M250 84l22 22-22 22-22-22z"/><path d="M310 84l22 22-22 22-22-22z"/><path d="M370 84l22 22-22 22-22-22z"/>
+            <path d="M430 84l22 22-22 22-22-22z"/>
+          </g>
+          <g fill="#c96f4a" opacity="0.5">
+            <path d="M40 128l22 22-22 22-22-22z"/><path d="M100 128l22 22-22 22-22-22z"/><path d="M160 128l22 22-22 22-22-22z"/>
+            <path d="M220 128l22 22-22 22-22-22z"/><path d="M280 128l22 22-22 22-22-22z"/><path d="M340 128l22 22-22 22-22-22z"/>
+            <path d="M400 128l22 22-22 22-22-22z"/><path d="M460 128l22 22-22 22-22-22z"/>
+          </g>
+          <rect y="186" width="500" height="94" fill="#140b09" opacity="0.7"/>
+        </svg>
+        <figcaption><span data-i18n-uz>Keramika devor</span><span data-i18n-ru>Керамическая стена</span></figcaption>
+      </figure>
+
+      <figure class="tile t-c">
+        <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="500" height="140" fill="#241512"/>
+          <g stroke="#f2e4cf" stroke-opacity="0.3" stroke-width="2" fill="none">
+            <path d="M70 30c0 20 10 32 22 32s22-12 22-32Z"/><path d="M92 62v30M76 92h32"/>
+            <path d="M190 30c0 20 10 32 22 32s22-12 22-32Z"/><path d="M212 62v30M196 92h32"/>
+            <path d="M310 30c0 20 10 32 22 32s22-12 22-32Z"/><path d="M332 62v30M316 92h32"/>
+            <path d="M420 30c0 20 10 32 22 32s22-12 22-32Z"/><path d="M442 62v30M426 92h32"/>
+          </g>
+          <path d="M72 42c6 14 14 18 20 18s14-4 20-18Z" fill="#8f1d2c"/>
+          <path d="M192 42c6 14 14 18 20 18s14-4 20-18Z" fill="#8f1d2c"/>
+          <path d="M312 42c6 14 14 18 20 18s14-4 20-18Z" fill="#e0913a" opacity="0.7"/>
+        </svg>
+        <figcaption><span data-i18n-uz>Vino xonasi</span><span data-i18n-ru>Винная комната</span></figcaption>
+      </figure>
+
+      <figure class="tile t-d">
+        <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs><radialGradient id="m4" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#5c6b3c"/><stop offset="100%" stop-color="#151d10"/></radialGradient></defs>
+          <rect width="400" height="280" fill="url(#m4)"/>
+          <g stroke="#f2e4cf" stroke-width="3" fill="none" opacity="0.55">
+            <path d="M40 210C120 170 220 200 370 120"/>
+          </g>
+          <g fill="#f2e4cf" opacity="0.45">
+            <ellipse cx="110" cy="186" rx="24" ry="11" transform="rotate(-24 110 186)"/>
+            <ellipse cx="190" cy="192" rx="24" ry="11" transform="rotate(16 190 192)"/>
+            <ellipse cx="266" cy="168" rx="24" ry="11" transform="rotate(-20 266 168)"/>
+            <ellipse cx="330" cy="140" rx="24" ry="11" transform="rotate(-30 330 140)"/>
+          </g>
+          <circle cx="150" cy="164" r="9" fill="#c96f4a"/><circle cx="232" cy="192" r="9" fill="#c96f4a"/>
+        </svg>
+        <figcaption><span data-i18n-uz>Terrasa</span><span data-i18n-ru>Терраса</span></figcaption>
+      </figure>
+
+      <figure class="tile t-e">
+        <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="280" fill="#1a0f0c"/>
+          <circle cx="200" cy="150" r="96" fill="#f2e4cf" opacity="0.9"/>
+          <circle cx="200" cy="150" r="80" fill="#c96f4a"/>
+          <circle cx="200" cy="150" r="80" fill="#8f1d2c" opacity="0.35"/>
+          <circle cx="176" cy="128" r="14" fill="#f2e4cf"/><circle cx="222" cy="164" r="14" fill="#f2e4cf"/>
+          <circle cx="228" cy="120" r="11" fill="#5c6b3c"/><circle cx="170" cy="176" r="11" fill="#5c6b3c"/>
+          <circle cx="200" cy="150" r="9" fill="#e0913a"/>
+        </svg>
+        <figcaption><span data-i18n-uz>O'choqdan</span><span data-i18n-ru>Из печи</span></figcaption>
+      </figure>
+
+      <figure class="tile t-f">
+        <svg viewBox="0 0 400 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs><linearGradient id="m6" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#8f1d2c"/><stop offset="100%" stop-color="#140b09"/></linearGradient></defs>
+          <rect width="400" height="280" fill="url(#m6)"/>
+          <g fill="#140b09" opacity="0.75">
+            <rect x="46" y="60" width="30" height="170" rx="12"/><rect x="96" y="46" width="30" height="184" rx="12"/>
+            <rect x="146" y="66" width="30" height="164" rx="12"/><rect x="196" y="40" width="30" height="190" rx="12"/>
+            <rect x="246" y="58" width="30" height="172" rx="12"/><rect x="296" y="50" width="30" height="180" rx="12"/>
+          </g>
+          <g fill="#e0913a" opacity="0.65">
+            <rect x="50" y="96" width="22" height="30"/><rect x="100" y="82" width="22" height="30"/>
+            <rect x="150" y="102" width="22" height="30"/><rect x="200" y="76" width="22" height="30"/>
+            <rect x="250" y="94" width="22" height="30"/><rect x="300" y="86" width="22" height="30"/>
+          </g>
+          <rect y="238" width="400" height="8" fill="#c96f4a" opacity="0.6"/>
+        </svg>
+        <figcaption><span data-i18n-uz>Vino tokchasi</span><span data-i18n-ru>Винная полка</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REVIEWS ================= -->
+<section class="rev pad" id="reviews">
+  <div class="wrap">
+    <div class="rev-top rv">
+      <div class="score">
+        <b class="num">4.1</b><small>/5</small>
+      </div>
+      <div class="score-meta">
+        <span data-i18n-uz><b>TripAdvisor</b> &mdash; 119 <span>sharh</span></span>
+        <span data-i18n-ru><b>TripAdvisor</b> &mdash; 119 отзывов</span><br>
+        <span data-i18n-uz>Toshkentdagi 627 restoran ichida <b>#65</b></span>
+        <span data-i18n-ru><b>#65</b> из 627 ресторанов Ташкента</span>
+      </div>
+    </div>
+
+    <div class="rev-rail rv" data-d="1">
+      <blockquote class="rev-card">
+        <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="rev-q" data-i18n-uz>&laquo;Toshkentda vongole bilan spagettini shu tarzda pishiradigan boshqa joyni bilmayman. Sous emas &mdash; dengiz.&raquo;</p>
+        <p class="rev-q" data-i18n-ru>&laquo;Не знаю другого места в Ташкенте, где вонголе делают вот так. Это не соус &mdash; это море.&raquo;</p>
+        <footer class="rev-who"><span data-i18n-uz>Dilnoza R.</span><span data-i18n-ru>Дильноза Р.</span><span>TripAdvisor</span></footer>
+      </blockquote>
+      <blockquote class="rev-card">
+        <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="rev-q" data-i18n-uz>&laquo;Biz bu yerga o'n yildan beri tug'ilgan kunlarni nishonlash uchun kelamiz. Ofitsiantlar bizni ismimiz bilan biladi.&raquo;</p>
+        <p class="rev-q" data-i18n-ru>&laquo;Мы приходим сюда отмечать дни рождения уже десять лет. Официанты знают нас по имени.&raquo;</p>
+        <footer class="rev-who"><span data-i18n-uz>Sergey M.</span><span data-i18n-ru>Сергей М.</span><span>Google</span></footer>
+      </blockquote>
+      <blockquote class="rev-card">
+        <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <p class="rev-q" data-i18n-uz>&laquo;Cannoli buyurtma bilan to'ldiriladi &mdash; shuning uchun qattiq. Rimda ham hamma joy bunday qilmaydi.&raquo;</p>
+        <p class="rev-q" data-i18n-ru>&laquo;Канноли наполняют под заказ &mdash; поэтому они хрустят. В Риме так делают не везде.&raquo;</p>
+        <footer class="rev-who"><span data-i18n-uz>Marco B.</span><span data-i18n-ru>Марко Б.</span><span>TripAdvisor</span></footer>
+      </blockquote>
+      <blockquote class="rev-card">
+        <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="rev-q" data-i18n-uz>&laquo;Ish uchrashuvlariga olib kelaman. Tinch, yorug'lik past, va menyu tushuntirishga muhtoj emas.&raquo;</p>
+        <p class="rev-q" data-i18n-ru>&laquo;Привожу сюда на деловые ужины. Тихо, свет приглушён, и меню не нуждается в объяснениях.&raquo;</p>
+        <footer class="rev-who"><span data-i18n-uz>Anna K.</span><span data-i18n-ru>Анна К.</span><span>Facebook</span></footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BOOK CTA ================= -->
+<section class="book">
+  <div class="book-art" aria-hidden="true">
+    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="bkG" cx="50%" cy="52%" r="62%">
+          <stop offset="0%" stop-color="#3a231d"/><stop offset="60%" stop-color="#1a0f0c"/><stop offset="100%" stop-color="#0f0806"/>
+        </radialGradient>
+      </defs>
+      <rect width="1600" height="900" fill="url(#bkG)"/>
+      <circle cx="800" cy="450" r="330" fill="none" stroke="#e0913a" stroke-opacity="0.14" stroke-width="1"/>
+      <circle cx="800" cy="450" r="430" fill="none" stroke="#c96f4a" stroke-opacity="0.1" stroke-width="1"/>
+      <circle cx="800" cy="450" r="530" fill="none" stroke="#8f1d2c" stroke-opacity="0.14" stroke-width="1"/>
+      <g fill="#5c6b3c" opacity="0.35">
+        <ellipse cx="140" cy="180" rx="34" ry="15" transform="rotate(-24 140 180)"/>
+        <ellipse cx="220" cy="230" rx="34" ry="15" transform="rotate(18 220 230)"/>
+        <ellipse cx="1420" cy="700" rx="34" ry="15" transform="rotate(22 1420 700)"/>
+        <ellipse cx="1340" cy="650" rx="34" ry="15" transform="rotate(-16 1340 650)"/>
+      </g>
+    </svg>
+  </div>
+  <div class="book-in wrap">
+    <h2 class="rv">
+      <span data-i18n-uz>Stol <em>sizni</em> kutmoqda.</span>
+      <span data-i18n-ru>Стол <em>вас</em> ждёт.</span>
+    </h2>
+    <p class="rv" data-d="1">
+      <span data-i18n-uz>Kechki bandlik odatda 19:00 dan 21:30 gacha to'ladi. Bir kun oldin joy oling.</span>
+      <span data-i18n-ru>Вечерние места обычно заканчиваются между 19:00 и 21:30. Бронируйте за сутки.</span>
+    </p>
+    <div class="book-acts rv" data-d="2">
+      <a href="tel:+998781299090" class="btn btn-fill magnetic">
+        <span data-i18n-uz>+998 78 129-90-90</span><span data-i18n-ru>+998 78 129-90-90</span>
+      </a>
+      <a href="#book" class="btn btn-line magnetic">
+        <span data-i18n-uz>Onlayn bron</span><span data-i18n-ru>Бронь онлайн</span><span class="arw">&rarr;</span>
+      </a>
+    </div>
+    <div class="book-hours rv" data-d="3">
+      <div><span data-i18n-uz>Dushanba &ndash; Payshanba</span><span data-i18n-ru>Пн &ndash; Чт</span><b>12:00 &ndash; 23:00</b></div>
+      <div><span data-i18n-uz>Juma &ndash; Shanba</span><span data-i18n-ru>Пт &ndash; Сб</span><b>12:00 &ndash; 00:00</b></div>
+      <div><span data-i18n-uz>Yakshanba</span><span data-i18n-ru>Воскресенье</span><b>12:00 &ndash; 23:00</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOCATION ================= -->
+<section class="loc pad" id="location">
+  <div class="wrap loc-grid">
+    <div class="rv">
+      <span class="label rule-label"><span data-i18n-uz>Manzil</span><span data-i18n-ru>Адрес</span></span>
+      <h2><span data-i18n-uz>Yakkasaroy,<br>Bobur ko'chasi 14.</span><span data-i18n-ru>Яккасарай,<br>улица Бабура 14.</span></h2>
+      <dl class="loc-rows">
+        <div><dt data-i18n-uz>Manzil</dt><dt data-i18n-ru>Адрес</dt><dd>&#1091;&#1083;. &#1041;&#1072;&#1073;&#1091;&#1088;&#1072; 14</dd></div>
+        <div><dt data-i18n-uz>Tuman</dt><dt data-i18n-ru>Район</dt><dd data-i18n-uz>Yakkasaroy, Toshkent</dd><dd data-i18n-ru>Яккасарай, Ташкент</dd></div>
+        <div><dt data-i18n-uz>Telefon</dt><dt data-i18n-ru>Телефон</dt><dd class="num">+998 78 129-90-90</dd></div>
+        <div><dt data-i18n-uz>Avtoturargoh</dt><dt data-i18n-ru>Парковка</dt><dd data-i18n-uz>Bino oldida</dd><dd data-i18n-ru>Перед зданием</dd></div>
+      </dl>
+    </div>
+    <div class="loc-map rv" data-d="1" aria-hidden="true">
+      <svg viewBox="0 0 700 480">
+        <rect width="700" height="480" fill="#140b09"/>
+        <g stroke="#f2e4cf" stroke-opacity="0.09" stroke-width="1">
+          <path d="M0 80h700M0 160h700M0 240h700M0 320h700M0 400h700"/>
+          <path d="M100 0v480M220 0v480M340 0v480M460 0v480M580 0v480"/>
+        </g>
+        <path d="M0 240h700" stroke="#c96f4a" stroke-opacity="0.5" stroke-width="6"/>
+        <path d="M340 0v480" stroke="#c96f4a" stroke-opacity="0.35" stroke-width="4"/>
+        <g fill="#f2e4cf" fill-opacity="0.06">
+          <rect x="120" y="100" width="90" height="60"/><rect x="380" y="120" width="120" height="70"/>
+          <rect x="150" y="300" width="110" height="80"/><rect x="440" y="300" width="90" height="90"/>
+        </g>
+        <circle cx="340" cy="240" r="52" fill="#8f1d2c" opacity="0.22"/>
+        <circle cx="340" cy="240" r="30" fill="#8f1d2c" opacity="0.4"/>
+        <circle cx="340" cy="240" r="11" fill="#e0913a"/>
+        <path d="M340 200v-30M340 280v30M300 240h-30M380 240h30" stroke="#e0913a" stroke-width="2"/>
+        <text x="368" y="212" fill="#f2e4cf" font-family="Jost, sans-serif" font-size="17" letter-spacing="3">AFFRESCO</text>
+        <text x="368" y="232" fill="#cbb9a0" font-family="Jost, sans-serif" font-size="13">Bobur 14</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand">
+        <a href="#top" class="brand">
+          <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="15" fill="none" stroke="#8f1d2c" stroke-width="1.5"/>
+            <path d="M16 6c4 4 4 9 0 13-4-4-4-9 0-13Z" fill="#5c6b3c"/>
+            <path d="M16 19v7" stroke="#e0913a" stroke-width="1.5"/>
+          </svg>
+          <span class="name">Affresco</span>
+        </a>
+        <p data-i18n-uz>Sitsiliya oshxonasi Toshkent markazida. 2009-yildan beri.</p>
+        <p data-i18n-ru>Сицилийская кухня в центре Ташкента. С 2009 года.</p>
+      </div>
+      <div>
+        <h4><span data-i18n-uz>Aloqa</span><span data-i18n-ru>Контакты</span></h4>
+        <a href="tel:+998781299090" class="big num">+998 78 129-90-90</a>
+        <p class="li">&#1091;&#1083;. &#1041;&#1072;&#1073;&#1091;&#1088;&#1072; 14</p>
+        <p class="li"><span data-i18n-uz>Yakkasaroy tumani, Toshkent</span><span data-i18n-ru>Яккасарайский район, Ташкент</span></p>
+      </div>
+      <div>
+        <h4><span data-i18n-uz>Ish vaqti</span><span data-i18n-ru>Часы работы</span></h4>
+        <p class="li num"><span data-i18n-uz>Du&ndash;Pay &nbsp;12:00&ndash;23:00</span><span data-i18n-ru>Пн&ndash;Чт &nbsp;12:00&ndash;23:00</span></p>
+        <p class="li num"><span data-i18n-uz>Ju&ndash;Sha &nbsp;12:00&ndash;00:00</span><span data-i18n-ru>Пт&ndash;Сб &nbsp;12:00&ndash;00:00</span></p>
+        <p class="li num"><span data-i18n-uz>Yak &nbsp;12:00&ndash;23:00</span><span data-i18n-ru>Вс &nbsp;12:00&ndash;23:00</span></p>
+      </div>
+      <div>
+        <h4><span data-i18n-uz>Bo'limlar</span><span data-i18n-ru>Разделы</span></h4>
+        <a href="#story" data-i18n-uz>Biz haqimizda</a><a href="#story" data-i18n-ru>О нас</a>
+        <a href="#menu" data-i18n-uz>Menyu</a><a href="#menu" data-i18n-ru>Меню</a>
+        <a href="#room" data-i18n-uz>Zal</a><a href="#room" data-i18n-ru>Зал</a>
+        <a href="#book" data-i18n-uz>Bron qilish</a><a href="#book" data-i18n-ru>Бронирование</a>
+      </div>
+    </div>
+    <div class="foot-end">
+      <span>&copy; 2026 Affresco Ristorante</span>
+      <span class="demo-note">
+        <span data-i18n-uz>Konsept-demo sayt. Menyu va narxlar namunaviy.</span>
+        <span data-i18n-ru>Концепт-демо сайта. Меню и цены &mdash; примерные.</span>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    'use strict';
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+    /* ---- preloader ---- */
+    var loader = document.getElementById('loader');
+    function hideLoader(){ if(loader) loader.classList.add('done'); }
+    window.addEventListener('load', function(){ setTimeout(hideLoader, reduced ? 0 : 1450); });
+    setTimeout(hideLoader, 4000);
+
+    /* ---- language toggle ---- */
+    var langBtns = document.querySelectorAll('[data-lang-btn]');
+    document.documentElement.setAttribute('data-lang','uz');
+    langBtns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var l = b.getAttribute('data-lang-btn');
+        document.documentElement.setAttribute('data-lang', l);
+        langBtns.forEach(function(o){ o.classList.toggle('on', o === b); });
+      });
+    });
+
+    /* ---- demo buttons ---- */
+    document.querySelectorAll('[data-demo-msg]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var ru = document.documentElement.getAttribute('data-lang') === 'ru';
+        alert(ru
+          ? 'Демо: здесь бронь уходит напрямую в Telegram хостес и в вашу систему резервов.'
+          : 'Demo: bu yerda bron xostes Telegramiga va rezervatsiya tizimingizga to\'g\'ridan-to\'g\'ri tushadi.');
+      });
+    });
+
+    /* ---- custom cursor ---- */
+    if(fine){
+      var cur = document.getElementById('cursor');
+      var cx = window.innerWidth/2, cy = window.innerHeight/2, tx = cx, ty = cy;
+      window.addEventListener('mousemove', function(e){ tx = e.clientX; ty = e.clientY; }, {passive:true});
+      (function loop(){
+        cx += (tx - cx) * 0.22; cy += (ty - cy) * 0.22;
+        cur.style.transform = 'translate(' + cx + 'px,' + cy + 'px) translate(-50%,-50%)';
+        requestAnimationFrame(loop);
+      })();
+      document.querySelectorAll('a, button, .tile, .dish, input, select').forEach(function(el){
+        el.addEventListener('mouseenter', function(){ cur.classList.add('wide'); });
+        el.addEventListener('mouseleave', function(){ cur.classList.remove('wide'); });
+      });
+    }
+
+    /* ---- magnetic buttons ---- */
+    if(fine && !reduced){
+      document.querySelectorAll('.magnetic').forEach(function(el){
+        el.addEventListener('mousemove', function(e){
+          var r = el.getBoundingClientRect();
+          var x = e.clientX - r.left - r.width/2;
+          var y = e.clientY - r.top - r.height/2;
+          el.style.transform = 'translate(' + (x*0.22) + 'px,' + (y*0.3) + 'px)';
+        });
+        el.addEventListener('mouseleave', function(){ el.style.transform = ''; });
+      });
+    }
+
+    /* ---- scroll progress + sticky header ---- */
+    var bar = document.getElementById('progress');
+    var head = document.getElementById('siteHead');
+    function onScroll(){
+      var d = document.documentElement;
+      var max = d.scrollHeight - d.clientHeight;
+      bar.style.width = (max > 0 ? (d.scrollTop / max) * 100 : 0) + '%';
+      head.classList.toggle('stuck', d.scrollTop > 80);
+      lightDishes();
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+
+    /* ---- reveal ---- */
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+    /* ---- MENU LEDGER: focus band + course tracking ---- */
+    var dishes = Array.prototype.slice.call(document.querySelectorAll('.dish'));
+    var blocks = Array.prototype.slice.call(document.querySelectorAll('.course-block'));
+    var courseBtns = Array.prototype.slice.call(document.querySelectorAll('#courses button'));
+    var narrow = window.matchMedia('(max-width:820px)');
+
+    function lightDishes(){
+      if(!dishes.length) return;
+      var band = window.innerHeight * 0.46;
+      if(!narrow.matches){
+        var best = null, bestD = Infinity;
+        dishes.forEach(function(d){
+          var r = d.getBoundingClientRect();
+          var mid = r.top + r.height/2;
+          var dist = Math.abs(mid - band);
+          var visible = r.bottom > 0 && r.top < window.innerHeight;
+          if(visible && dist < bestD){ bestD = dist; best = d; }
+        });
+        dishes.forEach(function(d){ d.classList.toggle('lit', d === best); });
+      }
+      /* active course */
+      var active = null;
+      blocks.forEach(function(b){
+        var r = b.getBoundingClientRect();
+        if(r.top <= band && r.bottom > band) active = b.id;
+      });
+      if(!active){
+        for(var i=0;i<blocks.length;i++){
+          var r2 = blocks[i].getBoundingClientRect();
+          if(r2.bottom > 0 && r2.top < window.innerHeight){ active = blocks[i].id; break; }
+        }
+      }
+      if(active){
+        courseBtns.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-goto') === active); });
+      }
+    }
+    courseBtns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var t = document.getElementById(b.getAttribute('data-goto'));
+        if(t) t.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'start'});
+      });
+    });
+
+    onScroll();
+  })();
+</script>

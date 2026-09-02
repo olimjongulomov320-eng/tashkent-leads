@@ -1,0 +1,1246 @@
+<title>AnnTerra Beauty Atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap">
+<style>
+  :root{
+    --bone:#f7f3ee;
+    --sand:#ede3d8;
+    --sand-deep:#ddcdbc;
+    --ink:#1c1618;
+    --ink-soft:#4c4144;
+    --ink-mute:#8a7c7f;
+    --oxblood:#7a2e3c;
+    --oxblood-deep:#5a1e29;
+    --champagne:#c9a66b;
+    --rule:rgba(28,22,24,0.14);
+    --rule-soft:rgba(28,22,24,0.07);
+    --surface:#ffffff;
+    --shadow:rgba(28,22,24,0.08);
+  }
+  /* AnnTerra commits to one deliberate world: an ivory editorial page.
+     Dark-scheme viewers get a deepened version of the same palette so the
+     page never borrows the host ground. */
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bone:#161214;
+      --sand:#1f191b;
+      --sand-deep:#2a2225;
+      --ink:#f3ece7;
+      --ink-soft:#cdbfb9;
+      --ink-mute:#95837f;
+      --oxblood:#d4899a;
+      --oxblood-deep:#b56a7c;
+      --champagne:#d8b87f;
+      --rule:rgba(243,236,231,0.16);
+      --rule-soft:rgba(243,236,231,0.08);
+      --surface:#1c1518;
+      --shadow:rgba(0,0,0,0.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bone:#161214;
+    --sand:#1f191b;
+    --sand-deep:#2a2225;
+    --ink:#f3ece7;
+    --ink-soft:#cdbfb9;
+    --ink-mute:#95837f;
+    --oxblood:#d4899a;
+    --oxblood-deep:#b56a7c;
+    --champagne:#d8b87f;
+    --rule:rgba(243,236,231,0.16);
+    --rule-soft:rgba(243,236,231,0.08);
+    --surface:#1c1518;
+    --shadow:rgba(0,0,0,0.45);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bone);
+    color:var(--ink);
+    font-family:'Outfit',system-ui,-apple-system,sans-serif;
+    font-weight:300;
+    line-height:1.6;
+    overflow-x:clip;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (hover:hover) and (pointer:fine){
+    body, a, button{cursor:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  svg{display:block;}
+  ::selection{background:var(--oxblood);color:var(--bone);}
+  :focus-visible{outline:2px solid var(--oxblood);outline-offset:3px;}
+
+  h1,h2,h3{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-weight:300;line-height:1.02;text-wrap:balance;letter-spacing:-0.005em;}
+
+  .wrap{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,72px);}
+  .label{
+    font-family:'Outfit',sans-serif;font-weight:400;font-size:0.68rem;
+    letter-spacing:0.26em;text-transform:uppercase;color:var(--oxblood);
+  }
+  .label-mute{color:var(--ink-mute);}
+
+  /* ---------- cursor ---------- */
+  #cursor{
+    position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;
+    border:1px solid var(--oxblood);background:var(--oxblood);
+    pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+    transition:width .35s cubic-bezier(.2,.8,.2,1),height .35s cubic-bezier(.2,.8,.2,1),background .35s,opacity .3s;
+  }
+  #cursor.wide{width:76px;height:76px;background:transparent;}
+  @media (hover:none),(pointer:coarse){#cursor{display:none;}}
+
+  /* ---------- progress ---------- */
+  #progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--oxblood);z-index:9998;}
+
+  /* ---------- loader ---------- */
+  #loader{
+    position:fixed;inset:0;background:var(--bone);z-index:10000;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:26px;
+    transition:opacity .9s ease,visibility .9s ease;
+  }
+  #loader.done{opacity:0;visibility:hidden;pointer-events:none;}
+  .ld-mark{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,7vw,3.6rem);letter-spacing:0.3em;
+    text-indent:0.3em;color:var(--ink);overflow:hidden;}
+  .ld-mark span{display:inline-block;opacity:0;transform:translateY(100%);animation:ldUp .9s cubic-bezier(.2,.8,.2,1) forwards;}
+  @keyframes ldUp{to{opacity:1;transform:none;}}
+  .ld-rule{width:min(240px,50vw);height:1px;background:var(--rule);position:relative;overflow:hidden;}
+  .ld-rule::after{content:"";position:absolute;inset:0;background:var(--oxblood);transform:scaleX(0);transform-origin:left;
+    animation:ldBar 1.5s cubic-bezier(.5,0,.15,1) forwards .35s;}
+  @keyframes ldBar{to{transform:scaleX(1);}}
+  @media (prefers-reduced-motion: reduce){#loader{display:none;}}
+
+  /* ---------- nav ---------- */
+  header.site{position:fixed;top:0;left:0;right:0;z-index:400;padding:22px 0;
+    transition:background .5s ease,padding .5s ease,border-color .5s;border-bottom:1px solid transparent;}
+  header.site.stuck{background:color-mix(in srgb,var(--bone) 92%,transparent);backdrop-filter:blur(14px);padding:14px 0;border-bottom-color:var(--rule-soft);}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:20px;}
+  .brand{font-family:'Cormorant Garamond',serif;font-size:1.35rem;letter-spacing:0.22em;text-indent:0.22em;color:var(--ink);}
+  .nav-links{display:flex;gap:clamp(16px,2.4vw,38px);font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft);}
+  .nav-links a{position:relative;padding-bottom:4px;}
+  .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--oxblood);
+    transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.2,.8,.2,1);}
+  .nav-links a:hover::after{transform:scaleX(1);transform-origin:left;}
+  .nav-right{display:flex;align-items:center;gap:16px;}
+  .lang{display:flex;border:1px solid var(--rule);border-radius:99px;overflow:hidden;}
+  .lang button{font-family:inherit;background:none;border:none;color:var(--ink-mute);font-size:0.66rem;letter-spacing:0.14em;
+    padding:7px 12px;transition:background .3s,color .3s;}
+  .lang button.on{background:var(--ink);color:var(--bone);}
+
+  .btn{display:inline-flex;align-items:center;gap:12px;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
+    font-weight:400;padding:16px 30px;border-radius:99px;border:1px solid var(--ink);color:var(--ink);
+    background:none;font-family:inherit;transition:background .45s cubic-bezier(.2,.8,.2,1),color .45s,border-color .45s;}
+  .btn:hover{background:var(--ink);color:var(--bone);}
+  .btn-fill{background:var(--oxblood);border-color:var(--oxblood);color:var(--bone);}
+  .btn-fill:hover{background:var(--oxblood-deep);border-color:var(--oxblood-deep);color:var(--bone);}
+  .btn .ar{transition:transform .4s cubic-bezier(.2,.8,.2,1);}
+  .btn:hover .ar{transform:translateX(6px);}
+  .magnetic{transition:transform .3s cubic-bezier(.2,.8,.2,1);}
+  .menu-btn{display:none;background:none;border:none;font-family:inherit;font-size:0.7rem;letter-spacing:0.18em;
+    text-transform:uppercase;color:var(--ink);}
+
+  /* ---------- reveal ---------- */
+  @media (prefers-reduced-motion: no-preference){
+    .rv{opacity:0;transform:translateY(26px);transition:opacity 1.1s cubic-bezier(.2,.8,.2,1),transform 1.1s cubic-bezier(.2,.8,.2,1);}
+    .rv.in{opacity:1;transform:none;}
+    .rv-d1{transition-delay:.1s;} .rv-d2{transition-delay:.2s;} .rv-d3{transition-delay:.3s;} .rv-d4{transition-delay:.4s;}
+  }
+
+  section{position:relative;}
+  .pad{padding:clamp(90px,13vw,190px) 0;}
+
+  /* ==================== HERO ==================== */
+  .hero{min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;padding-top:110px;position:relative;overflow:hidden;}
+  .hero-art{position:absolute;top:0;right:0;width:min(46vw,620px);height:100%;z-index:0;opacity:.9;pointer-events:none;}
+  .hero-art svg{width:100%;height:100%;}
+  .hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:clamp(24px,4vw,44px);}
+  .hero-meta{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;
+    border-top:1px solid var(--rule);padding-top:16px;}
+  .hero-meta p{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-mute);}
+  .hero-h{font-size:clamp(3.2rem,13.5vw,12rem);line-height:0.88;margin:clamp(18px,3vw,34px) 0;}
+  .hero-h .ln{display:block;overflow:hidden;}
+  .hero-h .ln > i{display:inline-block;font-style:normal;transform:translateY(105%);animation:lnUp 1.25s cubic-bezier(.16,.9,.2,1) forwards;}
+  .hero-h .ln:nth-child(1) > i{animation-delay:1.25s;}
+  .hero-h .ln:nth-child(2) > i{animation-delay:1.4s;}
+  .hero-h .ln:nth-child(3) > i{animation-delay:1.55s;}
+  .hero-h em{font-style:italic;color:var(--oxblood);}
+  @keyframes lnUp{to{transform:none;}}
+  @media (prefers-reduced-motion: reduce){.hero-h .ln > i{transform:none;animation:none;}}
+  .hero-bottom{display:grid;grid-template-columns:1.1fr auto;gap:clamp(24px,4vw,60px);align-items:end;
+    padding-bottom:clamp(36px,6vw,72px);}
+  .hero-lede{max-width:44ch;font-size:clamp(0.98rem,1.4vw,1.12rem);color:var(--ink-soft);}
+  .hero-cta{display:flex;flex-direction:column;gap:12px;align-items:flex-start;}
+  .hero-cta small{font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-mute);}
+  @media (max-width:860px){
+    .hero-bottom{grid-template-columns:1fr;}
+    .hero-art{width:70vw;opacity:.35;}
+  }
+
+  /* ==================== FOUNDER ==================== */
+  .founder{background:var(--sand);}
+  .founder-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:clamp(28px,6vw,90px);align-items:center;}
+  .founder-portrait{position:relative;}
+  .founder-portrait svg{width:100%;height:auto;}
+  .founder-portrait figcaption{margin-top:14px;font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-mute);}
+  .founder-copy h2{font-size:clamp(2.1rem,5vw,4.2rem);margin:20px 0 26px;}
+  .founder-copy h2 em{font-style:italic;color:var(--oxblood);}
+  .founder-copy p{max-width:54ch;color:var(--ink-soft);margin-bottom:18px;}
+  .sign{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.6rem;color:var(--oxblood);margin-top:12px;}
+  .founder-facts{display:flex;gap:clamp(24px,4vw,54px);margin-top:34px;padding-top:26px;border-top:1px solid var(--rule);flex-wrap:wrap;}
+  .founder-facts div b{display:block;font-family:'Cormorant Garamond',serif;font-weight:400;font-size:2.4rem;line-height:1;color:var(--ink);}
+  .founder-facts div span{font-size:0.66rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-mute);}
+  @media (max-width:860px){.founder-grid{grid-template-columns:1fr;}}
+
+  /* ==================== ATELIER / STYLIST LADDER ==================== */
+  .atelier{background:var(--bone);overflow:hidden;}
+  .at-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(30px,5vw,58px);}
+  .at-head h2{font-size:clamp(2rem,4.6vw,3.8rem);}
+  .at-viewport{position:relative;}
+  .at-rail{display:flex;gap:clamp(14px,2vw,28px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:22px;
+    scrollbar-width:thin;}
+  .at-rail::-webkit-scrollbar{height:3px;}
+  .at-rail::-webkit-scrollbar-track{background:var(--rule-soft);}
+  .at-rail::-webkit-scrollbar-thumb{background:var(--oxblood);}
+  .at-card{scroll-snap-align:start;flex:0 0 min(78vw,340px);}
+  .at-frame{aspect-ratio:3/4;background:var(--sand);overflow:hidden;position:relative;}
+  .at-frame svg{width:100%;height:100%;transition:transform 1.1s cubic-bezier(.2,.8,.2,1);}
+  .at-card:hover .at-frame svg{transform:scale(1.07);}
+  .at-num{position:absolute;top:16px;left:18px;font-family:'Cormorant Garamond',serif;font-size:2.4rem;line-height:1;
+    color:var(--bone);mix-blend-mode:difference;}
+  .at-card h3{font-size:1.5rem;margin-top:18px;}
+  .at-card p{font-size:0.85rem;color:var(--ink-mute);letter-spacing:0.02em;}
+  .at-card .spec{margin-top:10px;font-size:0.66rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--oxblood);}
+  .at-hint{margin-top:18px;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-mute);
+    display:flex;align-items:center;gap:10px;}
+  .at-hint::before{content:"";width:40px;height:1px;background:var(--oxblood);}
+
+  /* ==================== BRIDAL — three-act scroll film ==================== */
+  .bridal{background:var(--ink);color:var(--bone);position:relative;}
+  .bridal .label{color:var(--champagne);}
+  .bridal-open{padding:clamp(80px,12vw,150px) 0 clamp(40px,6vw,70px);text-align:center;}
+  .bridal-open h2{font-size:clamp(2.6rem,9vw,7.6rem);color:var(--bone);line-height:0.94;margin-top:18px;}
+  .bridal-open h2 em{font-style:italic;color:var(--champagne);}
+  .bridal-open p{max-width:46ch;margin:22px auto 0;color:rgba(247,243,238,0.66);font-size:1rem;}
+  .acts{display:grid;grid-template-columns:64px 1fr;gap:clamp(18px,4vw,56px);padding-bottom:clamp(70px,10vw,130px);}
+  .spine{position:relative;}
+  .spine-line{position:sticky;top:0;height:100svh;display:flex;align-items:center;justify-content:center;}
+  .spine-track{width:1px;height:60%;background:rgba(247,243,238,0.18);position:relative;}
+  .spine-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--champagne);transition:height .25s linear;}
+  .spine-dots{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;}
+  .spine-dots i{width:7px;height:7px;border-radius:50%;background:var(--ink);border:1px solid rgba(247,243,238,0.35);
+    transition:background .5s,border-color .5s,transform .5s;}
+  .spine-dots i.on{background:var(--champagne);border-color:var(--champagne);transform:scale(1.35);}
+  .act{min-height:88svh;display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,60px);align-items:center;
+    padding:clamp(30px,6vw,70px) 0;border-bottom:1px solid rgba(247,243,238,0.12);}
+  .act:last-child{border-bottom:none;}
+  .act-stage{aspect-ratio:4/5;position:relative;}
+  .act-stage svg{width:100%;height:100%;}
+  .act-idx{font-family:'Cormorant Garamond',serif;font-size:0.9rem;letter-spacing:0.3em;color:var(--champagne);text-transform:uppercase;}
+  .act h3{font-size:clamp(2rem,5vw,4rem);color:var(--bone);margin:14px 0 18px;}
+  .act h3 em{font-style:italic;color:var(--champagne);}
+  .act p{color:rgba(247,243,238,0.66);max-width:40ch;margin-bottom:22px;}
+  .act ul{list-style:none;display:flex;flex-direction:column;}
+  .act li{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px solid rgba(247,243,238,0.14);
+    font-size:0.88rem;color:rgba(247,243,238,0.8);}
+  .act li b{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.1rem;color:var(--champagne);white-space:nowrap;}
+  .bridal-cta{border-top:1px solid rgba(247,243,238,0.14);padding:clamp(44px,7vw,84px) 0;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;}
+  .bridal-cta p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.4rem,3.4vw,2.4rem);color:var(--bone);max-width:22ch;}
+  .bridal .btn{border-color:rgba(247,243,238,0.4);color:var(--bone);}
+  .bridal .btn:hover{background:var(--bone);color:var(--ink);border-color:var(--bone);}
+  .bridal .btn-fill{background:var(--champagne);border-color:var(--champagne);color:var(--ink);}
+  .bridal .btn-fill:hover{background:var(--bone);border-color:var(--bone);color:var(--ink);}
+  @media (max-width:860px){
+    .acts{grid-template-columns:1fr;}
+    .spine{display:none;}
+    .act{grid-template-columns:1fr;min-height:0;}
+  }
+
+  /* ==================== COSMETOLOGY ==================== */
+  .cosmo{background:var(--sand);}
+  .cosmo-head{max-width:52ch;margin-bottom:clamp(30px,5vw,56px);}
+  .cosmo-head h2{font-size:clamp(2rem,4.8vw,3.9rem);margin:18px 0 16px;}
+  .cosmo-head p{color:var(--ink-soft);}
+  .proto{border-top:1px solid var(--rule);}
+  .proto-row{border-bottom:1px solid var(--rule);}
+  .proto-btn{width:100%;background:none;border:none;font-family:inherit;color:var(--ink);text-align:left;
+    display:grid;grid-template-columns:auto 1fr auto auto;gap:clamp(14px,3vw,36px);align-items:center;
+    padding:clamp(20px,2.6vw,30px) 0;transition:padding-left .5s cubic-bezier(.2,.8,.2,1),color .4s;}
+  .proto-row:hover .proto-btn{padding-left:14px;color:var(--oxblood);}
+  .proto-btn .n{font-size:0.68rem;letter-spacing:0.18em;color:var(--ink-mute);width:2.4em;}
+  .proto-btn .t{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,3vw,2.3rem);line-height:1.05;}
+  .proto-btn .d{font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-mute);white-space:nowrap;}
+  .proto-btn .sgn{width:16px;height:16px;position:relative;flex:0 0 auto;}
+  .proto-btn .sgn::before,.proto-btn .sgn::after{content:"";position:absolute;background:var(--oxblood);
+    transition:transform .45s cubic-bezier(.2,.8,.2,1);}
+  .proto-btn .sgn::before{top:50%;left:0;width:100%;height:1px;transform:translateY(-50%);}
+  .proto-btn .sgn::after{left:50%;top:0;height:100%;width:1px;transform:translateX(-50%);}
+  .proto-row.open .sgn::after{transform:translateX(-50%) scaleY(0);}
+  .proto-panel{max-height:0;overflow:hidden;transition:max-height .65s cubic-bezier(.2,.8,.2,1);}
+  .proto-row.open .proto-panel{max-height:340px;}
+  .proto-inner{padding:0 0 30px;display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(20px,4vw,50px);align-items:start;}
+  .proto-inner p{color:var(--ink-soft);max-width:52ch;font-size:0.95rem;}
+  .proto-inner dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:0.82rem;}
+  .proto-inner dt{color:var(--ink-mute);letter-spacing:0.12em;text-transform:uppercase;font-size:0.66rem;padding-top:3px;}
+  .proto-inner dd{color:var(--ink);}
+  @media (max-width:760px){
+    .proto-btn{grid-template-columns:auto 1fr auto;}
+    .proto-btn .d{display:none;}
+    .proto-inner{grid-template-columns:1fr;}
+  }
+
+  /* ==================== SOCIAL PROOF ==================== */
+  .social{background:var(--bone);overflow:hidden;}
+  .social-band{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:20px 0;white-space:nowrap;overflow:hidden;}
+  .social-band .tk{display:inline-block;animation:mq 34s linear infinite;}
+  .social-band span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.3rem,3vw,2.1rem);
+    padding:0 2rem;color:var(--ink-soft);}
+  .social-band span.dot{color:var(--oxblood);font-style:normal;}
+  @keyframes mq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .social-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:clamp(28px,5vw,70px);align-items:center;
+    padding-top:clamp(50px,8vw,100px);}
+  .ig-count{font-family:'Cormorant Garamond',serif;font-size:clamp(4.4rem,14vw,11rem);line-height:0.85;color:var(--oxblood);
+    font-variant-numeric:tabular-nums;}
+  .ig-count sup{font-size:0.32em;vertical-align:super;color:var(--ink-mute);}
+  .ig-cap{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute);margin-top:10px;}
+  .quotes{display:flex;flex-direction:column;gap:0;}
+  .qt{padding:24px 0;border-top:1px solid var(--rule);}
+  .qt:last-child{border-bottom:1px solid var(--rule);}
+  .qt p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.05rem,2vw,1.4rem);color:var(--ink);margin-bottom:10px;}
+  .qt cite{font-style:normal;font-size:0.66rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-mute);}
+  @media (max-width:860px){.social-grid{grid-template-columns:1fr;}}
+
+  /* ==================== BOOKING ==================== */
+  .booking{background:var(--surface);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);}
+  .bk-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(30px,6vw,90px);align-items:start;}
+  .bk-copy h2{font-size:clamp(2.2rem,5.4vw,4.4rem);margin:18px 0 20px;}
+  .bk-copy h2 em{font-style:italic;color:var(--oxblood);}
+  .bk-copy p{color:var(--ink-soft);max-width:42ch;margin-bottom:26px;}
+  .bk-hours{display:flex;flex-direction:column;}
+  .bk-hours div{display:flex;justify-content:space-between;padding:11px 0;border-top:1px solid var(--rule-soft);font-size:0.86rem;}
+  .bk-hours div span:first-child{color:var(--ink-mute);letter-spacing:0.1em;text-transform:uppercase;font-size:0.68rem;}
+  .bk-form{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(14px,2vw,26px);}
+  .fld{position:relative;padding:16px 0 12px;border-bottom:1px solid var(--rule);}
+  .fld.full{grid-column:1/-1;}
+  .fld label{display:block;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px;}
+  .fld input,.fld select{width:100%;border:none;background:none;font-family:'Cormorant Garamond',serif;font-size:1.15rem;
+    color:var(--ink);padding:2px 0;}
+  .fld input:focus,.fld select:focus{outline:none;}
+  .fld select{cursor:pointer;}
+  .fld:focus-within{border-bottom-color:var(--oxblood);}
+  .bk-submit{grid-column:1/-1;margin-top:28px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+  .bk-note{font-size:0.72rem;color:var(--ink-mute);max-width:30ch;line-height:1.5;}
+  @media (max-width:860px){.bk-grid{grid-template-columns:1fr;} .bk-form{grid-template-columns:1fr;}}
+
+  /* ==================== LOCATION ==================== */
+  .loc{background:var(--sand-deep);}
+  .loc-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:clamp(26px,5vw,70px);align-items:center;}
+  .loc-map{border:1px solid var(--rule);background:var(--bone);overflow:hidden;}
+  .loc-map svg{width:100%;height:auto;}
+  .loc-copy h2{font-size:clamp(2rem,4.6vw,3.6rem);margin:16px 0 20px;}
+  .loc-lines{display:flex;flex-direction:column;margin-top:8px;}
+  .loc-lines div{padding:14px 0;border-top:1px solid var(--rule);}
+  .loc-lines dt{font-size:0.64rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:4px;}
+  .loc-lines dd{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--ink);}
+  @media (max-width:860px){.loc-grid{grid-template-columns:1fr;}}
+
+  /* ==================== FOOTER ==================== */
+  footer{background:var(--ink);color:var(--bone);padding:clamp(60px,9vw,110px) 0 34px;}
+  .ft-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:clamp(26px,5vw,60px);padding-bottom:clamp(40px,6vw,70px);}
+  .ft-mark{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3.4rem);letter-spacing:0.14em;color:var(--bone);}
+  .ft-top p{color:rgba(247,243,238,0.6);font-size:0.9rem;max-width:34ch;margin-top:14px;}
+  .ft-col h4{font-size:0.64rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--champagne);margin-bottom:16px;font-weight:400;}
+  .ft-col a,.ft-col p{display:block;font-size:0.9rem;color:rgba(247,243,238,0.72);margin-bottom:9px;max-width:30ch;}
+  .ft-col a:hover{color:var(--champagne);}
+  .ft-bot{border-top:1px solid rgba(247,243,238,0.16);padding-top:22px;display:flex;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;font-size:0.72rem;color:rgba(247,243,238,0.45);}
+  @media (max-width:760px){.ft-top{grid-template-columns:1fr;}}
+
+  @media (max-width:900px){
+    .nav-links{display:none;}
+    .menu-btn{display:block;}
+  }
+
+  /* i18n */
+  [data-ru]{display:none;}
+  [data-lang="ru"] [data-ru]{display:revert;}
+  [data-lang="ru"] [data-uz]{display:none;}
+</style>
+
+<div id="loader">
+  <div class="ld-mark"><span>ANNTERRA</span></div>
+  <div class="ld-rule"></div>
+</div>
+<div id="cursor"></div>
+<div id="progress"></div>
+
+<header class="site" id="hdr">
+  <div class="wrap nav">
+    <a href="#top" class="brand">ANNTERRA</a>
+    <nav class="nav-links">
+      <a href="#founder"><span data-uz>Brend</span><span data-ru>Бренд</span></a>
+      <a href="#atelier"><span data-uz>Atelye</span><span data-ru>Ателье</span></a>
+      <a href="#bridal"><span data-uz>Kelin</span><span data-ru>Невеста</span></a>
+      <a href="#cosmo"><span data-uz>Kosmetologiya</span><span data-ru>Косметология</span></a>
+      <a href="#location"><span data-uz>Manzil</span><span data-ru>Адрес</span></a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang">
+        <button type="button" data-set="uz" class="on">UZ</button>
+        <button type="button" data-set="ru">RU</button>
+      </div>
+      <a href="#booking" class="btn magnetic">
+        <span data-uz>Yozilish</span><span data-ru>Записаться</span>
+      </a>
+      <button type="button" class="menu-btn"><span data-uz>Menyu</span><span data-ru>Меню</span></button>
+    </div>
+  </div>
+</header>
+
+<div id="top"></div>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-art" aria-hidden="true">
+    <svg viewBox="0 0 600 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hg" x1="0" y1="0" x2="0.4" y2="1">
+          <stop offset="0%" stop-color="#ede3d8"/><stop offset="100%" stop-color="#f7f3ee"/>
+        </linearGradient>
+      </defs>
+      <rect width="600" height="1000" fill="url(#hg)"/>
+      <circle cx="360" cy="380" r="250" fill="none" stroke="#7a2e3c" stroke-opacity="0.18" stroke-width="1"/>
+      <circle cx="360" cy="380" r="185" fill="none" stroke="#c9a66b" stroke-opacity="0.4" stroke-width="1"/>
+      <!-- profile line-art -->
+      <path d="M300 200 C 400 200 452 268 452 372 C 452 430 438 462 452 500 C 460 520 442 528 428 528
+               C 424 566 434 596 418 622 C 402 648 366 662 330 662 L 330 760"
+            fill="none" stroke="#1c1618" stroke-opacity="0.55" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M300 200 C 236 208 208 258 214 322 C 220 392 214 452 232 512 C 250 572 262 618 268 700"
+            fill="none" stroke="#1c1618" stroke-opacity="0.4" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M330 760 C 300 800 276 860 268 960" fill="none" stroke="#1c1618" stroke-opacity="0.3" stroke-width="1.5"/>
+      <path d="M418 380 q 22 -14 40 0" fill="none" stroke="#7a2e3c" stroke-opacity="0.65" stroke-width="1.5" stroke-linecap="round"/>
+      <ellipse cx="424" cy="470" rx="12" ry="6" fill="#7a2e3c" fill-opacity="0.5"/>
+      <path d="M214 322 C 180 300 176 240 214 214 C 246 192 300 190 300 200" fill="#1c1618" fill-opacity="0.08"/>
+      <circle cx="480" cy="640" r="3" fill="#c9a66b"/>
+      <circle cx="150" cy="300" r="2" fill="#7a2e3c" fill-opacity="0.6"/>
+    </svg>
+  </div>
+
+  <div class="wrap hero-inner">
+    <div class="hero-meta">
+      <p><span data-uz>Toshkent &middot; Mirobod &middot; 2019-yildan</span><span data-ru>Ташкент &middot; Мирабад &middot; с 2019</span></p>
+      <p><span data-uz>Kelin makiyaji &middot; Kosmetologiya &middot; Soch</span><span data-ru>Свадебный образ &middot; Косметология &middot; Волосы</span></p>
+    </div>
+
+    <h1 class="hero-h">
+      <span class="ln" data-uz><i>Go&lsquo;zallik</i></span>
+      <span class="ln" data-uz><i><em>shoshmaydi.</em></i></span>
+      <span class="ln" data-uz><i>U tinglaydi.</i></span>
+      <span class="ln" data-ru><i>Красота</i></span>
+      <span class="ln" data-ru><i><em>не спешит.</em></i></span>
+      <span class="ln" data-ru><i>Она слушает.</i></span>
+    </h1>
+
+    <div class="hero-bottom">
+      <p class="hero-lede">
+        <span data-uz>AnnTerra &mdash; muallif atelyesi. Bir kunda oz mijoz, har biriga uzoq vaqt. Kelin obrazlari, kosmetologiya va yuzingizning o&lsquo;z tabiatiga mos yechimlar.</span>
+        <span data-ru>AnnTerra &mdash; авторское ателье красоты. Немного клиентов в день, много времени каждому. Свадебные образы, косметология и решения, которые считаются с вашей собственной природой.</span>
+      </p>
+      <div class="hero-cta">
+        <small><span data-uz>Joylar cheklangan</span><span data-ru>Мест немного</span></small>
+        <a href="#booking" class="btn btn-fill magnetic">
+          <span data-uz>Konsultatsiyaga yozilish</span><span data-ru>Записаться на консультацию</span>
+          <span class="ar">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOUNDER ============ -->
+<section class="founder pad" id="founder">
+  <div class="wrap founder-grid">
+    <figure class="founder-portrait rv">
+      <svg viewBox="0 0 440 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portrait line-art of the founder">
+        <rect width="440" height="560" fill="#f7f3ee"/>
+        <rect x="26" y="26" width="388" height="508" fill="none" stroke="#7a2e3c" stroke-opacity="0.28" stroke-width="1"/>
+        <path d="M220 120 C 296 120 336 172 336 250 C 336 300 322 330 336 356 C 344 372 328 380 314 380
+                 C 312 412 318 436 304 458 C 288 482 250 494 220 494 C 190 494 152 482 136 458
+                 C 122 436 128 412 126 380 C 112 380 96 372 104 356 C 118 330 104 300 104 250
+                 C 104 172 144 120 220 120 Z" fill="#ede3d8" stroke="#1c1618" stroke-opacity="0.5" stroke-width="1.4"/>
+        <path d="M104 250 C 92 190 122 128 190 112 C 250 98 314 116 336 176 C 348 210 340 244 336 250"
+              fill="#1c1618" fill-opacity="0.14" stroke="#1c1618" stroke-opacity="0.4" stroke-width="1.4"/>
+        <path d="M160 258 q 26 -16 52 0 M 228 258 q 26 -16 52 0" fill="none" stroke="#1c1618" stroke-opacity="0.6" stroke-width="1.6" stroke-linecap="round"/>
+        <ellipse cx="186" cy="286" rx="9" ry="5" fill="#1c1618" fill-opacity="0.55"/>
+        <ellipse cx="254" cy="286" rx="9" ry="5" fill="#1c1618" fill-opacity="0.55"/>
+        <path d="M212 300 q 8 34 -10 44 q 12 8 26 2" fill="none" stroke="#1c1618" stroke-opacity="0.4" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M198 392 q 22 -12 44 0 q -22 22 -44 0 Z" fill="#7a2e3c" fill-opacity="0.75"/>
+        <path d="M220 494 C 170 512 132 528 112 560 M 220 494 C 270 512 308 528 328 560"
+              fill="none" stroke="#1c1618" stroke-opacity="0.35" stroke-width="1.4"/>
+        <circle cx="150" cy="330" r="26" fill="#7a2e3c" fill-opacity="0.08"/>
+        <circle cx="290" cy="330" r="26" fill="#7a2e3c" fill-opacity="0.08"/>
+      </svg>
+      <figcaption><span data-uz>Anna &mdash; asoschi va bosh usta</span><span data-ru>Анна &mdash; основательница и ведущий мастер</span></figcaption>
+    </figure>
+
+    <div class="founder-copy rv rv-d1">
+      <span class="label"><span data-uz>Muallif brendi</span><span data-ru>Авторский бренд</span></span>
+      <h2>
+        <span data-uz>Bu salon emas. Bu <em>bir odamning</em> qo&lsquo;li.</span>
+        <span data-ru>Это не салон. Это <em>рука одного</em> мастера.</span>
+      </h2>
+      <p>
+        <span data-uz>Men AnnTerrani konveyer bo&lsquo;lmasin deb ochganman. Kelin obrazi ustida to&lsquo;rt soat ishlash mumkin &mdash; va agar shuncha kerak bo&lsquo;lsa, shuncha ishlaymiz. Har bir mijoz uchun jadvalimda haqiqiy joy ajratiladi, &laquo;keyingi mijoz kutyapti&raquo; degan shoshilish yo&lsquo;q.</span>
+        <span data-ru>Я открывала AnnTerra, чтобы это не превратилось в конвейер. Свадебный образ может занять четыре часа &mdash; и если нужно четыре, мы работаем четыре. Под каждого клиента в графике стоит настоящее время, без спешки &laquo;следующая уже ждёт&raquo;.</span>
+      </p>
+      <p>
+        <span data-uz>Kosmetologiyada ham xuddi shu qoida: avval diagnostika va suhbat, keyin protokol. Bir marta &laquo;hamma narsa&raquo; emas &mdash; teriga mos bosqichma-bosqich reja.</span>
+        <span data-ru>В косметологии тот же принцип: сначала диагностика и разговор, потом протокол. Не &laquo;всё сразу&raquo;, а поэтапный план, который кожа способна выдержать.</span>
+      </p>
+      <p class="sign">Anna</p>
+
+      <div class="founder-facts">
+        <div><b>6</b><span data-uz>Yil amaliyot</span><span data-ru>Лет практики</span></div>
+        <div><b>1</b><span data-uz>Mijoz bir vaqtda</span><span data-ru>Клиент за раз</span></div>
+        <div><b>9,3<span style="font-size:.5em;">K</span></b><span data-uz>Instagram obunachi</span><span data-ru>Подписчиков в Instagram</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ATELIER RAIL ============ -->
+<section class="atelier pad" id="atelier">
+  <div class="wrap">
+    <div class="at-head rv">
+      <div>
+        <span class="label"><span data-uz>Atelye ishlari</span><span data-ru>Работы ателье</span></span>
+        <h2 style="margin-top:16px;">
+          <span data-uz>To&lsquo;rt obraz,<br>to&lsquo;rt xil xarakter.</span>
+          <span data-ru>Четыре образа,<br>четыре характера.</span>
+        </h2>
+      </div>
+      <p style="max-width:32ch;color:var(--ink-soft);font-size:0.92rem;">
+        <span data-uz>Har bir obraz yuz shakli, teri toni va kunning yorug&lsquo;ligiga qarab quriladi &mdash; kayfiyatga qarab emas.</span>
+        <span data-ru>Каждый образ строится под форму лица, тон кожи и свет того дня &mdash; а не под настроение.</span>
+      </p>
+    </div>
+
+    <div class="at-viewport rv rv-d1">
+      <div class="at-rail" id="atRail">
+        <article class="at-card">
+          <div class="at-frame">
+            <svg viewBox="0 0 340 453" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Soft daylight look">
+              <rect width="340" height="453" fill="#ede3d8"/>
+              <circle cx="170" cy="180" r="120" fill="#f7f3ee"/>
+              <path d="M170 90 C 226 90 254 128 254 182 C 254 216 244 236 254 254 C 260 266 248 272 238 272
+                       C 236 296 240 314 230 330 C 218 348 194 356 170 356 C 146 356 122 348 110 330
+                       C 100 314 104 296 102 272 C 92 272 80 266 86 254 C 96 236 86 216 86 182
+                       C 86 128 114 90 170 90 Z" fill="#f7f3ee" stroke="#1c1618" stroke-opacity="0.45" stroke-width="1.3"/>
+              <path d="M86 182 C 76 132 112 88 170 84 C 226 80 258 118 254 182" fill="#c9a66b" fill-opacity="0.35"/>
+              <ellipse cx="144" cy="204" rx="7" ry="4" fill="#1c1618" fill-opacity="0.6"/>
+              <ellipse cx="196" cy="204" rx="7" ry="4" fill="#1c1618" fill-opacity="0.6"/>
+              <path d="M154 282 q 16 -9 32 0 q -16 16 -32 0 Z" fill="#7a2e3c" fill-opacity="0.65"/>
+              <path d="M170 356 C 128 372 96 392 82 453 M170 356 C 212 372 244 392 258 453" fill="none" stroke="#1c1618" stroke-opacity="0.3" stroke-width="1.3"/>
+            </svg>
+            <span class="at-num">01</span>
+          </div>
+          <h3><span data-uz>Kunduzgi yorug&lsquo;lik</span><span data-ru>Дневной свет</span></h3>
+          <p><span data-uz>Terining o&lsquo;z toni ko&lsquo;rinib turadigan yengil makiyaj.</span><span data-ru>Лёгкий макияж, в котором виден собственный тон кожи.</span></p>
+          <p class="spec"><span data-uz>60 daqiqa</span><span data-ru>60 минут</span></p>
+        </article>
+
+        <article class="at-card">
+          <div class="at-frame">
+            <svg viewBox="0 0 340 453" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Evening look">
+              <rect width="340" height="453" fill="#1c1618"/>
+              <circle cx="170" cy="190" r="140" fill="#7a2e3c" fill-opacity="0.35"/>
+              <path d="M170 96 C 226 96 254 134 254 188 C 254 222 244 242 254 260 C 260 272 248 278 238 278
+                       C 236 302 240 320 230 336 C 218 354 194 362 170 362 C 146 362 122 354 110 336
+                       C 100 320 104 302 102 278 C 92 278 80 272 86 260 C 96 242 86 222 86 188
+                       C 86 134 114 96 170 96 Z" fill="#ede3d8" stroke="#f7f3ee" stroke-opacity="0.5" stroke-width="1.3"/>
+              <path d="M86 188 C 72 128 116 86 170 86 C 230 86 262 130 254 194 C 250 226 244 232 254 260" fill="#1c1618" fill-opacity="0.85"/>
+              <path d="M128 200 q 18 -12 36 -2 M 178 198 q 18 -10 36 2" fill="none" stroke="#1c1618" stroke-width="2" stroke-linecap="round"/>
+              <ellipse cx="144" cy="212" rx="8" ry="4" fill="#1c1618"/>
+              <ellipse cx="196" cy="212" rx="8" ry="4" fill="#1c1618"/>
+              <path d="M152 290 q 18 -10 36 0 q -18 18 -36 0 Z" fill="#5a1e29"/>
+              <circle cx="112" cy="252" r="20" fill="#7a2e3c" fill-opacity="0.3"/>
+              <circle cx="228" cy="252" r="20" fill="#7a2e3c" fill-opacity="0.3"/>
+            </svg>
+            <span class="at-num">02</span>
+          </div>
+          <h3><span data-uz>Kechki obraz</span><span data-ru>Вечерний образ</span></h3>
+          <p><span data-uz>Chuqur ko&lsquo;z va matlashgan lab &mdash; sun&lsquo;iy yorug&lsquo;lik uchun hisoblangan.</span><span data-ru>Глубокие глаза и матовые губы &mdash; рассчитано на искусственный свет.</span></p>
+          <p class="spec"><span data-uz>90 daqiqa</span><span data-ru>90 минут</span></p>
+        </article>
+
+        <article class="at-card">
+          <div class="at-frame">
+            <svg viewBox="0 0 340 453" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bridal updo">
+              <rect width="340" height="453" fill="#f7f3ee"/>
+              <path d="M0 300 Q 170 250 340 300 L 340 453 L 0 453 Z" fill="#ede3d8"/>
+              <path d="M170 106 C 222 106 250 142 250 194 C 250 226 240 246 250 262 C 256 274 244 280 234 280
+                       C 232 302 236 320 226 336 C 214 354 192 362 170 362 C 148 362 126 354 114 336
+                       C 104 320 108 302 106 280 C 96 280 84 274 90 262 C 100 246 90 226 90 194
+                       C 90 142 118 106 170 106 Z" fill="#f7f3ee" stroke="#1c1618" stroke-opacity="0.45" stroke-width="1.3"/>
+              <path d="M90 194 C 80 140 122 100 170 100 C 220 100 258 138 250 194" fill="none" stroke="#1c1618" stroke-opacity="0.5" stroke-width="1.3"/>
+              <circle cx="170" cy="86" r="42" fill="none" stroke="#1c1618" stroke-opacity="0.4" stroke-width="1.3"/>
+              <circle cx="170" cy="86" r="26" fill="none" stroke="#c9a66b" stroke-width="1.4"/>
+              <path d="M96 150 Q 170 60 244 150" fill="none" stroke="#c9a66b" stroke-width="1.5" stroke-dasharray="3 5"/>
+              <ellipse cx="146" cy="216" rx="7" ry="4" fill="#1c1618" fill-opacity="0.6"/>
+              <ellipse cx="194" cy="216" rx="7" ry="4" fill="#1c1618" fill-opacity="0.6"/>
+              <path d="M156 292 q 14 -8 28 0 q -14 14 -28 0 Z" fill="#7a2e3c" fill-opacity="0.6"/>
+              <path d="M170 362 C 120 382 90 402 78 453 M170 362 C 220 382 250 402 262 453" fill="none" stroke="#1c1618" stroke-opacity="0.28" stroke-width="1.3"/>
+            </svg>
+            <span class="at-num">03</span>
+          </div>
+          <h3><span data-uz>Kelin turmagi</span><span data-ru>Свадебная укладка</span></h3>
+          <p><span data-uz>Fata bilan sinovdan o&lsquo;tgan, kun oxirigacha turadigan konstruksiya.</span><span data-ru>Конструкция, протестированная с фатой и держащаяся до конца дня.</span></p>
+          <p class="spec"><span data-uz>120 daqiqa</span><span data-ru>120 минут</span></p>
+        </article>
+
+        <article class="at-card">
+          <div class="at-frame">
+            <svg viewBox="0 0 340 453" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Editorial portrait">
+              <rect width="340" height="453" fill="#7a2e3c"/>
+              <rect x="0" y="0" width="340" height="453" fill="#1c1618" fill-opacity="0.25"/>
+              <circle cx="170" cy="200" r="150" fill="#ede3d8" fill-opacity="0.14"/>
+              <path d="M170 100 C 224 100 252 138 252 192 C 252 226 242 246 252 264 C 258 276 246 282 236 282
+                       C 234 306 238 324 228 340 C 216 358 192 366 170 366 C 148 366 124 358 112 340
+                       C 102 324 106 306 104 282 C 94 282 82 276 88 264 C 98 246 88 226 88 192
+                       C 88 138 116 100 170 100 Z" fill="#f7f3ee" fill-opacity="0.94"/>
+              <path d="M88 192 C 74 130 120 92 170 92 C 224 92 262 132 252 192" fill="#1c1618" fill-opacity="0.9"/>
+              <path d="M124 208 q 22 -14 44 -4 M 176 204 q 22 -10 42 4" fill="none" stroke="#1c1618" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M154 296 q 16 -9 32 0 q -16 16 -32 0 Z" fill="#5a1e29"/>
+              <path d="M0 366 Q 170 330 340 366 L 340 453 L 0 453 Z" fill="#1c1618" fill-opacity="0.5"/>
+              <circle cx="272" cy="120" r="4" fill="#c9a66b"/>
+              <circle cx="66" cy="330" r="3" fill="#c9a66b"/>
+            </svg>
+            <span class="at-num">04</span>
+          </div>
+          <h3><span data-uz>Suratga tayyorgarlik</span><span data-ru>Подготовка к съёмке</span></h3>
+          <p><span data-uz>Kamera uchun alohida: yorug&lsquo;lik aks etmaydigan tekstura.</span><span data-ru>Отдельно под камеру: текстура, которая не бликует.</span></p>
+          <p class="spec"><span data-uz>75 daqiqa</span><span data-ru>75 минут</span></p>
+        </article>
+      </div>
+      <p class="at-hint"><span data-uz>Yon tomonga suring</span><span data-ru>Листайте вбок</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRIDAL ============ -->
+<section class="bridal" id="bridal">
+  <div class="wrap bridal-open rv">
+    <span class="label"><span data-uz>Kelinlar uchun</span><span data-ru>Для невест</span></span>
+    <h2>
+      <span data-uz>Uch qism.<br><em>Bitta kun.</em></span>
+      <span data-ru>Три части.<br><em>Один день.</em></span>
+    </h2>
+    <p>
+      <span data-uz>Kelin obrazi &mdash; bu bitta seans emas, balki uch bosqichli tayyorgarlik. Pastga suring &mdash; kun qanday quriladi.</span>
+      <span data-ru>Свадебный образ &mdash; это не один сеанс, а три этапа подготовки. Прокрутите вниз &mdash; так строится день.</span>
+    </p>
+  </div>
+
+  <div class="wrap acts" id="acts">
+    <div class="spine" aria-hidden="true">
+      <div class="spine-line">
+        <div class="spine-track">
+          <div class="spine-fill" id="spineFill"></div>
+          <div class="spine-dots" id="spineDots"><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acts-body">
+      <article class="act" data-act="0">
+        <div class="act-stage rv">
+          <svg viewBox="0 0 480 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Morning preparation">
+            <rect width="480" height="600" fill="#241d20"/>
+            <rect x="40" y="60" width="240" height="380" fill="#2e2529"/>
+            <path d="M40 60 L280 60 L280 440 L40 440 Z" fill="none" stroke="#c9a66b" stroke-opacity="0.4" stroke-width="1"/>
+            <path d="M60 440 L60 130 Q 160 70 260 130 L 260 440" fill="#c9a66b" fill-opacity="0.08"/>
+            <circle cx="160" cy="230" r="72" fill="#f7f3ee" fill-opacity="0.9"/>
+            <path d="M96 214 C 90 160 122 128 160 128 C 200 128 232 160 224 216" fill="#241d20"/>
+            <ellipse cx="140" cy="238" rx="6" ry="3" fill="#241d20"/>
+            <ellipse cx="180" cy="238" rx="6" ry="3" fill="#241d20"/>
+            <path d="M150 268 q 10 -6 20 0 q -10 10 -20 0 Z" fill="#7a2e3c"/>
+            <path d="M160 302 C 120 320 100 352 96 440 M160 302 C 200 320 220 352 224 440" fill="none" stroke="#f7f3ee" stroke-opacity="0.4" stroke-width="1.4"/>
+            <!-- vanity bulbs -->
+            <circle cx="60" cy="86" r="7" fill="#c9a66b"/><circle cx="110" cy="86" r="7" fill="#c9a66b" fill-opacity="0.8"/>
+            <circle cx="160" cy="86" r="7" fill="#c9a66b"/><circle cx="210" cy="86" r="7" fill="#c9a66b" fill-opacity="0.8"/>
+            <circle cx="260" cy="86" r="7" fill="#c9a66b"/>
+            <!-- brushes -->
+            <g stroke="#f7f3ee" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round">
+              <path d="M340 480 L340 400"/><path d="M366 480 L366 380"/><path d="M392 480 L392 412"/><path d="M418 480 L418 392"/>
+            </g>
+            <g fill="#7a2e3c">
+              <rect x="336" y="374" width="9" height="30" rx="4"/><rect x="362" y="354" width="9" height="30" rx="4"/>
+              <rect x="388" y="386" width="9" height="30" rx="4"/><rect x="414" y="366" width="9" height="30" rx="4"/>
+            </g>
+            <rect x="320" y="480" width="120" height="8" rx="4" fill="#c9a66b" fill-opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="rv rv-d1">
+          <span class="act-idx"><span data-uz>Birinchi qism</span><span data-ru>Часть первая</span></span>
+          <h3><span data-uz>Tayyorgarlik <em>ertalabi</em></span><span data-ru>Утро <em>подготовки</em></span></h3>
+          <p>
+            <span data-uz>To&lsquo;ydan bir oy oldin sinov seansi, so&lsquo;ng kunning o&lsquo;zida ertalabki ish. Fotograf kelguncha obraz tayyor bo&lsquo;ladi.</span>
+            <span data-ru>Пробный образ за месяц до свадьбы, потом работа в само утро. К приезду фотографа образ уже готов.</span>
+          </p>
+          <ul>
+            <li><span data-uz>Sinov seansi</span><span data-ru>Пробный образ</span><b><span data-uz>1 oy oldin</span><span data-ru>за месяц</span></b></li>
+            <li><span data-uz>Ertalabki ish</span><span data-ru>Работа утром</span><b>07:00 &ndash; 11:00</b></li>
+            <li><span data-uz>Teri tayyorlash</span><span data-ru>Подготовка кожи</span><b><span data-uz>kiritilgan</span><span data-ru>включено</span></b></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="act" data-act="1">
+        <div class="act-stage rv">
+          <svg viewBox="0 0 480 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The aisle">
+            <defs>
+              <linearGradient id="aisle" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3a2c31"/><stop offset="100%" stop-color="#1c1618"/>
+              </linearGradient>
+            </defs>
+            <rect width="480" height="600" fill="url(#aisle)"/>
+            <path d="M240 130 L 420 600 L 60 600 Z" fill="#f7f3ee" fill-opacity="0.07"/>
+            <path d="M240 130 L 340 600 M240 130 L 140 600" stroke="#c9a66b" stroke-opacity="0.35" stroke-width="1"/>
+            <path d="M240 60 A 90 90 0 0 1 330 150 L 330 300 L 150 300 L 150 150 A 90 90 0 0 1 240 60 Z"
+                  fill="none" stroke="#c9a66b" stroke-opacity="0.5" stroke-width="1.2"/>
+            <!-- bride silhouette -->
+            <circle cx="240" cy="250" r="34" fill="#f7f3ee"/>
+            <path d="M212 236 C 206 200 222 182 240 182 C 260 182 276 200 268 238" fill="#241d20"/>
+            <path d="M240 284 C 206 296 190 330 186 400 C 182 470 174 520 166 570 L 314 570
+                     C 306 520 298 470 294 400 C 290 330 274 296 240 284 Z" fill="#f7f3ee" fill-opacity="0.95"/>
+            <path d="M240 284 C 200 300 176 350 168 430 C 160 510 150 560 140 596 L 340 596
+                     C 330 560 320 510 312 430 C 304 350 280 300 240 284 Z" fill="#f7f3ee" fill-opacity="0.2"/>
+            <path d="M214 224 q 26 -12 52 0" fill="none" stroke="#c9a66b" stroke-width="1.4"/>
+            <circle cx="240" cy="200" r="4" fill="#c9a66b"/>
+            <!-- petals -->
+            <g fill="#7a2e3c" fill-opacity="0.7">
+              <ellipse cx="110" cy="470" rx="9" ry="5" transform="rotate(-20 110 470)"/>
+              <ellipse cx="380" cy="500" rx="9" ry="5" transform="rotate(25 380 500)"/>
+              <ellipse cx="150" cy="546" rx="8" ry="4" transform="rotate(10 150 546)"/>
+              <ellipse cx="352" cy="428" rx="7" ry="4" transform="rotate(-35 352 428)"/>
+            </g>
+          </svg>
+        </div>
+        <div class="rv rv-d1">
+          <span class="act-idx"><span data-uz>Ikkinchi qism</span><span data-ru>Часть вторая</span></span>
+          <h3><span data-uz>Marosim <em>vaqti</em></span><span data-ru>Время <em>церемонии</em></span></h3>
+          <p>
+            <span data-uz>Usta joyida qoladi: fatani mahkamlash, obrazni tuzatish, issiqda ham turishini ta&lsquo;minlash. Bu alohida xizmat emas &mdash; paketning bir qismi.</span>
+            <span data-ru>Мастер остаётся на месте: закрепить фату, поправить образ, удержать его в жару. Это не отдельная услуга &mdash; это часть пакета.</span>
+          </p>
+          <ul>
+            <li><span data-uz>Joyida hamrohlik</span><span data-ru>Сопровождение на месте</span><b><span data-uz>4 soatgacha</span><span data-ru>до 4 часов</span></b></li>
+            <li><span data-uz>Fata va aksessuar</span><span data-ru>Фата и аксессуары</span><b><span data-uz>kiritilgan</span><span data-ru>включено</span></b></li>
+            <li><span data-uz>Obrazni yangilash</span><span data-ru>Обновление образа</span><b>&times;2</b></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="act" data-act="2">
+        <div class="act-stage rv">
+          <svg viewBox="0 0 480 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portrait session">
+            <rect width="480" height="600" fill="#f7f3ee"/>
+            <rect x="0" y="0" width="480" height="600" fill="#ede3d8"/>
+            <circle cx="240" cy="270" r="190" fill="#f7f3ee"/>
+            <circle cx="240" cy="270" r="190" fill="none" stroke="#7a2e3c" stroke-opacity="0.3" stroke-width="1"/>
+            <path d="M240 130 C 306 130 340 172 340 234 C 340 272 328 296 340 316 C 348 330 334 338 322 338
+                     C 320 366 324 388 312 406 C 298 428 270 438 240 438 C 210 438 182 428 168 406
+                     C 156 388 160 366 158 338 C 146 338 132 330 140 316 C 152 296 140 272 140 234
+                     C 140 172 174 130 240 130 Z" fill="#ede3d8" stroke="#1c1618" stroke-opacity="0.55" stroke-width="1.4"/>
+            <path d="M140 234 C 128 176 172 124 240 124 C 308 124 352 176 340 234" fill="#1c1618" fill-opacity="0.16" stroke="#1c1618" stroke-opacity="0.45" stroke-width="1.3"/>
+            <path d="M186 254 q 24 -14 48 -2 M 250 252 q 24 -12 46 2" fill="none" stroke="#1c1618" stroke-opacity="0.65" stroke-width="1.7" stroke-linecap="round"/>
+            <ellipse cx="208" cy="272" rx="8" ry="4.5" fill="#1c1618" fill-opacity="0.7"/>
+            <ellipse cx="274" cy="272" rx="8" ry="4.5" fill="#1c1618" fill-opacity="0.7"/>
+            <path d="M222 352 q 18 -10 36 0 q -18 18 -36 0 Z" fill="#7a2e3c" fill-opacity="0.8"/>
+            <path d="M240 438 C 186 456 154 484 144 600 M240 438 C 294 456 326 484 336 600" fill="none" stroke="#1c1618" stroke-opacity="0.35" stroke-width="1.4"/>
+            <path d="M96 240 L 120 240 M 360 240 L 384 240" stroke="#c9a66b" stroke-width="2"/>
+            <circle cx="240" cy="122" r="6" fill="#c9a66b"/>
+            <rect x="30" y="30" width="60" height="1" fill="#7a2e3c" fill-opacity="0.5"/>
+            <rect x="30" y="30" width="1" height="60" fill="#7a2e3c" fill-opacity="0.5"/>
+            <rect x="390" y="569" width="60" height="1" fill="#7a2e3c" fill-opacity="0.5"/>
+            <rect x="449" y="510" width="1" height="60" fill="#7a2e3c" fill-opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="rv rv-d1">
+          <span class="act-idx"><span data-uz>Uchinchi qism</span><span data-ru>Часть третья</span></span>
+          <h3><span data-uz>Qoladigan <em>portret</em></span><span data-ru>Портрет, <em>который остаётся</em></span></h3>
+          <p>
+            <span data-uz>To&lsquo;y o&lsquo;tadi, suratlar qoladi. Shuning uchun obraz kamera oldida ham, ko&lsquo;z bilan ham bir xil ko&lsquo;rinishi kerak &mdash; biz uni ikkala holatda ham tekshiramiz.</span>
+            <span data-ru>Свадьба проходит, фотографии остаются. Поэтому образ должен одинаково работать и в кадре, и вживую &mdash; мы проверяем оба состояния.</span>
+          </p>
+          <ul>
+            <li><span data-uz>Kamera testi</span><span data-ru>Тест под камеру</span><b><span data-uz>sinov kunida</span><span data-ru>на пробе</span></b></li>
+            <li><span data-uz>Fotograf bilan muvofiqlashtirish</span><span data-ru>Согласование с фотографом</span><b><span data-uz>ha</span><span data-ru>да</span></b></li>
+            <li><span data-uz>To&lsquo;liq paket</span><span data-ru>Полный пакет</span><b><span data-uz>so&lsquo;rov bo&lsquo;yicha</span><span data-ru>по запросу</span></b></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="wrap bridal-cta rv">
+    <p><span data-uz>To&lsquo;y mavsumi uchun joylar oldindan band qilinadi.</span><span data-ru>Даты свадебного сезона занимаются заранее.</span></p>
+    <a href="#booking" class="btn btn-fill magnetic">
+      <span data-uz>Kelin paketini muhokama qilish</span><span data-ru>Обсудить свадебный пакет</span><span class="ar">&rarr;</span>
+    </a>
+  </div>
+</section>
+
+<!-- ============ COSMETOLOGY ============ -->
+<section class="cosmo pad" id="cosmo">
+  <div class="wrap">
+    <div class="cosmo-head rv">
+      <span class="label"><span data-uz>Kosmetologiya</span><span data-ru>Косметология</span></span>
+      <h2><span data-uz>Protokollar, mo&lsquo;jizalar emas.</span><span data-ru>Протоколы, а не чудеса.</span></h2>
+      <p>
+        <span data-uz>Har bir protokol diagnostikadan boshlanadi. Quyidagi tavsiflar &mdash; namunaviy, aniq reja konsultatsiyada tuziladi.</span>
+        <span data-ru>Каждый протокол начинается с диагностики. Описания ниже &mdash; ориентировочные, точный план составляется на консультации.</span>
+      </p>
+    </div>
+
+    <div class="proto rv rv-d1" id="proto">
+      <div class="proto-row">
+        <button class="proto-btn" type="button" aria-expanded="false">
+          <span class="n">01</span>
+          <span class="t"><span data-uz>Teri diagnostikasi</span><span data-ru>Диагностика кожи</span></span>
+          <span class="d"><span data-uz>40 daqiqa</span><span data-ru>40 минут</span></span>
+          <span class="sgn" aria-hidden="true"></span>
+        </button>
+        <div class="proto-panel">
+          <div class="proto-inner">
+            <p><span data-uz>Yorug&lsquo;lik ostida ko&lsquo;rik, namlik va yog&lsquo;lilik darajasini baholash, anamnez. Yakunda &mdash; yozma reja: nima qilamiz, qaysi tartibda va qancha vaqtda.</span>
+               <span data-ru>Осмотр при направленном свете, оценка увлажнённости и жирности, сбор анамнеза. На выходе &mdash; письменный план: что делаем, в каком порядке и за какой срок.</span></p>
+            <dl>
+              <dt><span data-uz>Davomiylik</span><span data-ru>Длительность</span></dt><dd>40 <span data-uz>daq.</span><span data-ru>мин.</span></dd>
+              <dt><span data-uz>Natija</span><span data-ru>Результат</span></dt><dd><span data-uz>Yozma reja</span><span data-ru>Письменный план</span></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-row">
+        <button class="proto-btn" type="button" aria-expanded="false">
+          <span class="n">02</span>
+          <span class="t"><span data-uz>Chuqur tozalash</span><span data-ru>Глубокая чистка</span></span>
+          <span class="d"><span data-uz>90 daqiqa</span><span data-ru>90 минут</span></span>
+          <span class="sgn" aria-hidden="true"></span>
+        </button>
+        <div class="proto-panel">
+          <div class="proto-inner">
+            <p><span data-uz>Bug&lsquo;lash, mexanik va ultratovushli bosqichlar, tinchlantiruvchi niqob. Muhim tadbirdan kamida 10 kun oldin rejalashtiriladi.</span>
+               <span data-ru>Распаривание, механический и ультразвуковой этапы, успокаивающая маска. Планируется минимум за 10 дней до важного события.</span></p>
+            <dl>
+              <dt><span data-uz>Davriylik</span><span data-ru>Периодичность</span></dt><dd><span data-uz>4&ndash;6 haftada</span><span data-ru>раз в 4&ndash;6 недель</span></dd>
+              <dt><span data-uz>Tiklanish</span><span data-ru>Восстановление</span></dt><dd>1&ndash;2 <span data-uz>kun</span><span data-ru>дня</span></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-row">
+        <button class="proto-btn" type="button" aria-expanded="false">
+          <span class="n">03</span>
+          <span class="t"><span data-uz>Kimyoviy pilling kursi</span><span data-ru>Курс химических пилингов</span></span>
+          <span class="d"><span data-uz>4 seans</span><span data-ru>4 сеанса</span></span>
+          <span class="sgn" aria-hidden="true"></span>
+        </button>
+        <div class="proto-panel">
+          <div class="proto-inner">
+            <p><span data-uz>Kislota konsentratsiyasi bosqichma-bosqich oshiriladi. Kurs kuzdan bahorgacha o&lsquo;tkaziladi &mdash; quyosh faolligi past bo&lsquo;lgan davrda.</span>
+               <span data-ru>Концентрация кислот повышается ступенчато. Курс проводится с осени до весны &mdash; в период низкой солнечной активности.</span></p>
+            <dl>
+              <dt><span data-uz>Oraliq</span><span data-ru>Интервал</span></dt><dd>14 <span data-uz>kun</span><span data-ru>дней</span></dd>
+              <dt><span data-uz>Shart</span><span data-ru>Условие</span></dt><dd>SPF 50 <span data-uz>har kuni</span><span data-ru>ежедневно</span></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-row">
+        <button class="proto-btn" type="button" aria-expanded="false">
+          <span class="n">04</span>
+          <span class="t"><span data-uz>To&lsquo;yga 3 oylik dastur</span><span data-ru>Программа &laquo;3 месяца до свадьбы&raquo;</span></span>
+          <span class="d"><span data-uz>12 hafta</span><span data-ru>12 недель</span></span>
+          <span class="sgn" aria-hidden="true"></span>
+        </button>
+        <div class="proto-panel">
+          <div class="proto-inner">
+            <p><span data-uz>Kalendarga bog&lsquo;langan reja: tozalash, pilling va namlantirish bosqichlari to&lsquo;y sanasiga qarab joylashtiriladi, oxirgi ikki hafta &mdash; faqat tinchlantiruvchi muolajalar.</span>
+               <span data-ru>План, привязанный к календарю: чистки, пилинги и увлажнение расставлены относительно даты свадьбы, последние две недели &mdash; только успокаивающий уход.</span></p>
+            <dl>
+              <dt><span data-uz>Seanslar</span><span data-ru>Сеансов</span></dt><dd>8&ndash;10</dd>
+              <dt><span data-uz>Boshlash</span><span data-ru>Старт</span></dt><dd><span data-uz>To&lsquo;ydan 90 kun oldin</span><span data-ru>За 90 дней до свадьбы</span></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-row">
+        <button class="proto-btn" type="button" aria-expanded="false">
+          <span class="n">05</span>
+          <span class="t"><span data-uz>Qo&lsquo;llab-quvvatlovchi parvarish</span><span data-ru>Поддерживающий уход</span></span>
+          <span class="d"><span data-uz>60 daqiqa</span><span data-ru>60 минут</span></span>
+          <span class="sgn" aria-hidden="true"></span>
+        </button>
+        <div class="proto-panel">
+          <div class="proto-inner">
+            <p><span data-uz>Kurs tugagandan keyingi oylik seans &mdash; natijani ushlab turish uchun. Uy parvarishi ro&lsquo;yxati har safar qayta ko&lsquo;rib chiqiladi.</span>
+               <span data-ru>Ежемесячный сеанс после курса &mdash; чтобы удержать результат. Список домашнего ухода пересматривается каждый раз.</span></p>
+            <dl>
+              <dt><span data-uz>Davriylik</span><span data-ru>Периодичность</span></dt><dd><span data-uz>Oyiga 1 marta</span><span data-ru>1 раз в месяц</span></dd>
+              <dt><span data-uz>Uy parvarishi</span><span data-ru>Домашний уход</span></dt><dd><span data-uz>Qayta ko&lsquo;rib chiqiladi</span><span data-ru>Пересматривается</span></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOCIAL ============ -->
+<section class="social pad">
+  <div class="social-band" aria-hidden="true">
+    <div class="tk">
+      <span data-uz>&laquo;Bir marta keldim &mdash; qoldim&raquo;</span><span data-ru>&laquo;Пришла один раз &mdash; осталась&raquo;</span>
+      <span class="dot">&mdash;</span>
+      <span>@annterra.beauty</span>
+      <span class="dot">&mdash;</span>
+      <span data-uz>&laquo;To&lsquo;yimga tayyorlashdi&raquo;</span><span data-ru>&laquo;Готовили меня к свадьбе&raquo;</span>
+      <span class="dot">&mdash;</span>
+      <span data-uz>&laquo;Bir marta keldim &mdash; qoldim&raquo;</span><span data-ru>&laquo;Пришла один раз &mdash; осталась&raquo;</span>
+      <span class="dot">&mdash;</span>
+      <span>@annterra.beauty</span>
+      <span class="dot">&mdash;</span>
+      <span data-uz>&laquo;To&lsquo;yimga tayyorlashdi&raquo;</span><span data-ru>&laquo;Готовили меня к свадьбе&raquo;</span>
+      <span class="dot">&mdash;</span>
+    </div>
+  </div>
+
+  <div class="wrap social-grid">
+    <div class="rv">
+      <span class="label"><span data-uz>Instagram</span><span data-ru>Instagram</span></span>
+      <p class="ig-count"><span id="igNum">0</span><sup>+</sup></p>
+      <p class="ig-cap"><span data-uz>Obunachi &mdash; @annterra.beauty</span><span data-ru>Подписчиков &mdash; @annterra.beauty</span></p>
+      <p style="margin-top:22px;color:var(--ink-soft);max-width:34ch;font-size:0.94rem;">
+        <span data-uz>Portfolio Instagramda yig&lsquo;ilgan &mdash; bu sayt esa uni tartibga soladi va yozilishni bir bosishga qisqartiradi.</span>
+        <span data-ru>Портфолио живёт в Instagram &mdash; этот сайт приводит его в порядок и сокращает запись до одного клика.</span>
+      </p>
+      <a href="#booking" class="btn magnetic" style="margin-top:24px;">
+        <span data-uz>Profilni ko&lsquo;rish</span><span data-ru>Смотреть профиль</span><span class="ar">&rarr;</span>
+      </a>
+    </div>
+
+    <div class="quotes rv rv-d1">
+      <blockquote class="qt">
+        <p><span data-uz>&laquo;Sinov seansidan keyin to&lsquo;y kuni hech narsadan xavotir olmadim. Obraz kechgacha o&lsquo;zgarmadi.&raquo;</span>
+           <span data-ru>&laquo;После пробного образа в день свадьбы я вообще ни о чём не переживала. Образ не поплыл до вечера.&raquo;</span></p>
+        <cite><span data-uz>Kelin &middot; 2025 mavsum &middot; namunaviy sharh</span><span data-ru>Невеста &middot; сезон 2025 &middot; иллюстративный отзыв</span></cite>
+      </blockquote>
+      <blockquote class="qt">
+        <p><span data-uz>&laquo;Menga birinchi marta nima qilinayotganini va nima uchun kerakligini tushuntirishdi.&raquo;</span>
+           <span data-ru>&laquo;Мне впервые объяснили, что именно делают и зачем это нужно.&raquo;</span></p>
+        <cite><span data-uz>Kosmetologiya mijozi &middot; namunaviy sharh</span><span data-ru>Клиент косметологии &middot; иллюстративный отзыв</span></cite>
+      </blockquote>
+      <blockquote class="qt">
+        <p><span data-uz>&laquo;Yonimda boshqa mijoz yo&lsquo;q edi. Butun vaqt meniki edi.&raquo;</span>
+           <span data-ru>&laquo;Рядом не было другого клиента. Всё время было моим.&raquo;</span></p>
+        <cite><span data-uz>Doimiy mijoz &middot; namunaviy sharh</span><span data-ru>Постоянный клиент &middot; иллюстративный отзыв</span></cite>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BOOKING ============ -->
+<section class="booking pad" id="booking">
+  <div class="wrap bk-grid">
+    <div class="bk-copy rv">
+      <span class="label"><span data-uz>Yozilish</span><span data-ru>Запись</span></span>
+      <h2><span data-uz>Keling, <em>gaplashamiz.</em></span><span data-ru>Давайте <em>поговорим.</em></span></h2>
+      <p>
+        <span data-uz>Yozilishdan oldin qisqa konsultatsiya &mdash; bepul. Nima kerakligini birga aniqlaymiz, keyin vaqt band qilamiz.</span>
+        <span data-ru>Перед записью &mdash; короткая бесплатная консультация. Вместе разбираемся, что нужно, и только потом бронируем время.</span>
+      </p>
+      <div class="bk-hours">
+        <div><span data-uz>Dush &ndash; Juma</span><span data-ru>Пн &ndash; Пт</span><span>10:00 &mdash; 20:00</span></div>
+        <div><span data-uz>Shanba</span><span data-ru>Суббота</span><span>10:00 &mdash; 18:00</span></div>
+        <div><span data-uz>Yakshanba</span><span data-ru>Воскресенье</span><span data-uz>Faqat to&lsquo;ylar</span><span data-ru>Только свадьбы</span></div>
+      </div>
+    </div>
+
+    <form class="bk-form rv rv-d1" id="bkForm">
+      <div class="fld full">
+        <label for="f-name"><span data-uz>Ismingiz</span><span data-ru>Ваше имя</span></label>
+        <input id="f-name" type="text" placeholder="Nilufar" autocomplete="name">
+      </div>
+      <div class="fld">
+        <label for="f-tel"><span data-uz>Telefon</span><span data-ru>Телефон</span></label>
+        <input id="f-tel" type="tel" placeholder="+998 __ ___ __ __" autocomplete="tel">
+      </div>
+      <div class="fld">
+        <label for="f-date"><span data-uz>Sana</span><span data-ru>Дата</span></label>
+        <input id="f-date" type="date" value="2026-09-18">
+      </div>
+      <div class="fld full">
+        <label for="f-svc"><span data-uz>Xizmat</span><span data-ru>Услуга</span></label>
+        <select id="f-svc">
+          <option data-uz>Kelin paketi</option><option data-ru>Свадебный пакет</option>
+          <option data-uz>Kunduzgi makiyaj</option><option data-ru>Дневной макияж</option>
+          <option data-uz>Kechki obraz</option><option data-ru>Вечерний образ</option>
+          <option data-uz>Kosmetologiya &mdash; diagnostika</option><option data-ru>Косметология &mdash; диагностика</option>
+          <option data-uz>Hali bilmayman</option><option data-ru>Пока не знаю</option>
+        </select>
+      </div>
+      <div class="bk-submit">
+        <button type="submit" class="btn btn-fill magnetic">
+          <span data-uz>So&lsquo;rov yuborish</span><span data-ru>Отправить заявку</span><span class="ar">&rarr;</span>
+        </button>
+        <p class="bk-note" id="bkNote">
+          <span data-uz>Demo forma. Haqiqiy saytda &mdash; jadval va Telegram bildirishnomasi.</span>
+          <span data-ru>Демо-форма. На рабочем сайте &mdash; календарь и уведомление в Telegram.</span>
+        </p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ LOCATION ============ -->
+<section class="loc pad" id="location">
+  <div class="wrap loc-grid">
+    <div class="loc-map rv">
+      <svg viewBox="0 0 700 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schematic map of the Mirabad district location">
+        <rect width="700" height="440" fill="#f7f3ee"/>
+        <g stroke="#1c1618" stroke-opacity="0.1" stroke-width="1">
+          <path d="M0 90 H700 M0 190 H700 M0 300 H700 M0 380 H700"/>
+          <path d="M110 0 V440 M250 0 V440 M420 0 V440 M560 0 V440"/>
+        </g>
+        <path d="M0 190 H700" stroke="#1c1618" stroke-opacity="0.3" stroke-width="6"/>
+        <path d="M420 0 V440" stroke="#1c1618" stroke-opacity="0.3" stroke-width="5"/>
+        <rect x="250" y="90" width="170" height="100" fill="#ede3d8"/>
+        <rect x="560" y="300" width="140" height="80" fill="#ede3d8"/>
+        <circle cx="420" cy="190" r="42" fill="#7a2e3c" fill-opacity="0.12"/>
+        <circle cx="420" cy="190" r="26" fill="#7a2e3c" fill-opacity="0.2"/>
+        <circle cx="420" cy="190" r="8" fill="#7a2e3c"/>
+        <path d="M420 182 L 420 130" stroke="#7a2e3c" stroke-width="1.5"/>
+        <text x="428" y="124" font-family="Outfit, sans-serif" font-size="15" fill="#1c1618" letter-spacing="2">ANNTERRA</text>
+        <text x="428" y="144" font-family="Outfit, sans-serif" font-size="11" fill="#8a7c7f" letter-spacing="1.5">NUKUSSKAYA 31/1</text>
+        <text x="20" y="180" font-family="Outfit, sans-serif" font-size="11" fill="#8a7c7f" letter-spacing="2">MIRABAD</text>
+        <text x="576" y="345" font-family="Outfit, sans-serif" font-size="11" fill="#8a7c7f" letter-spacing="1.5">NRG OYBEK</text>
+        <circle cx="120" cy="300" r="5" fill="#c9a66b"/>
+        <text x="134" y="305" font-family="Outfit, sans-serif" font-size="11" fill="#8a7c7f" letter-spacing="1.5">OYBEK M.</text>
+      </svg>
+    </div>
+
+    <div class="loc-copy rv rv-d1">
+      <span class="label"><span data-uz>Manzil</span><span data-ru>Адрес</span></span>
+      <h2><span data-uz>Mirobod, NRG Oybek</span><span data-ru>Мирабад, ЖК NRG Oybek</span></h2>
+      <dl class="loc-lines">
+        <div>
+          <dt><span data-uz>Manzil</span><span data-ru>Адрес</span></dt>
+          <dd>Nukusskaya 31/1, <span data-uz>ЖК NRG Oybek</span><span data-ru>ЖК NRG Oybek</span></dd>
+        </div>
+        <div>
+          <dt><span data-uz>Tuman</span><span data-ru>Район</span></dt>
+          <dd><span data-uz>Mirobod tumani, Toshkent</span><span data-ru>Мирабадский район, Ташкент</span></dd>
+        </div>
+        <div>
+          <dt><span data-uz>Yozilish</span><span data-ru>Запись</span></dt>
+          <dd><span data-uz>Hozircha Instagram orqali</span><span data-ru>Пока через Instagram</span></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="ft-top">
+      <div>
+        <p class="ft-mark">ANNTERRA</p>
+        <p>
+          <span data-uz>Muallif go&lsquo;zallik atelyesi. Kelin obrazlari, makiyaj va kosmetologiya &mdash; Toshkent, Mirobod.</span>
+          <span data-ru>Авторское ателье красоты. Свадебные образы, макияж и косметология &mdash; Ташкент, Мирабад.</span>
+        </p>
+      </div>
+      <div class="ft-col">
+        <h4><span data-uz>Manzil</span><span data-ru>Адрес</span></h4>
+        <p>Nukusskaya 31/1</p>
+        <p>ЖК NRG Oybek</p>
+        <p><span data-uz>Mirobod tumani, Toshkent</span><span data-ru>Мирабадский район, Ташкент</span></p>
+      </div>
+      <div class="ft-col">
+        <h4><span data-uz>Aloqa</span><span data-ru>Связь</span></h4>
+        <a href="https://instagram.com/annterra.beauty" target="_blank" rel="noopener">@annterra.beauty</a>
+        <p style="color:rgba(247,243,238,0.45);font-size:0.82rem;">
+          <span data-uz>Yozilish hozircha faqat Instagram orqali qabul qilinadi &mdash; ushbu sayt buni to&lsquo;g&lsquo;ridan-to&lsquo;g&lsquo;ri bronga almashtiradi.</span>
+          <span data-ru>Запись пока принимается только через Instagram &mdash; этот сайт заменяет её прямым бронированием.</span>
+        </p>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <span data-uz>&copy; 2026 AnnTerra Beauty &mdash; konsepsiya-demo, amaldagi sayt emas.</span>
+      <span data-ru>&copy; 2026 AnnTerra Beauty &mdash; концепт-демо, не действующий сайт.</span>
+      <span data-uz>Namoyish uchun tayyorlangan dizayn</span>
+      <span data-ru>Дизайн, подготовленный для презентации</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- loader ---- */
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      var l = document.getElementById('loader');
+      if(l) l.classList.add('done');
+    }, reduced ? 0 : 1400);
+  });
+
+  /* ---- language ---- */
+  root.setAttribute('data-lang','uz');
+  root.setAttribute('lang','uz');
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var v = b.getAttribute('data-set');
+      root.setAttribute('data-lang', v);
+      root.setAttribute('lang', v === 'ru' ? 'ru' : 'uz');
+      document.querySelectorAll('.lang button').forEach(function(x){ x.classList.toggle('on', x === b); });
+    });
+  });
+
+  /* ---- cursor ---- */
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(fine){
+    var cur = document.getElementById('cursor');
+    var cx = window.innerWidth/2, cy = window.innerHeight/2, tx = cx, ty = cy;
+    document.addEventListener('mousemove', function(e){ tx = e.clientX; ty = e.clientY; });
+    (function loop(){
+      cx += (tx - cx) * 0.2; cy += (ty - cy) * 0.2;
+      cur.style.transform = 'translate(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px) translate(-50%,-50%)';
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a, button, .at-card, input, select').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ cur.classList.add('wide'); });
+      el.addEventListener('mouseleave', function(){ cur.classList.remove('wide'); });
+    });
+  }
+
+  /* ---- progress + header ---- */
+  var prog = document.getElementById('progress');
+  var hdr = document.getElementById('hdr');
+  function onScroll(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    prog.style.width = p + '%';
+    hdr.classList.toggle('stuck', window.scrollY > 60);
+    spine();
+  }
+
+  /* ---- reveal ---- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* ---- bridal spine: scroll-driven three-act progress ---- */
+  var acts = Array.prototype.slice.call(document.querySelectorAll('.act'));
+  var fill = document.getElementById('spineFill');
+  var dots = Array.prototype.slice.call(document.querySelectorAll('#spineDots i'));
+  var actsWrap = document.getElementById('acts');
+  function spine(){
+    if(!actsWrap || !fill) return;
+    var r = actsWrap.getBoundingClientRect();
+    var total = r.height - window.innerHeight;
+    var passed = -r.top;
+    var p = total > 0 ? Math.min(1, Math.max(0, passed / total)) : 0;
+    fill.style.height = (p * 100) + '%';
+    var mid = window.innerHeight / 2;
+    acts.forEach(function(a, i){
+      var ar = a.getBoundingClientRect();
+      var on = ar.top < mid && ar.bottom > mid * 0.4;
+      if(dots[i]) dots[i].classList.toggle('on', on || (i === 0 && ar.top > mid && p === 0));
+    });
+  }
+
+  /* ---- instagram counter ---- */
+  var igNum = document.getElementById('igNum');
+  var igTarget = 9300;
+  igNum.textContent = igTarget.toLocaleString('ru-RU');
+  var igDone = reduced;
+  var igIo = new IntersectionObserver(function(en){
+    en.forEach(function(e){
+      if(e.isIntersecting && !igDone){
+        igDone = true;
+        igNum.textContent = '0';
+        var start = performance.now(), dur = 1600;
+        (function tick(now){
+          var t = Math.min(1, (now - start) / dur);
+          var e2 = 1 - Math.pow(1 - t, 3);
+          igNum.textContent = Math.round(igTarget * e2).toLocaleString('ru-RU');
+          if(t < 1) requestAnimationFrame(tick);
+        })(performance.now());
+      }
+    });
+  }, { threshold: 0.5 });
+  igIo.observe(igNum);
+
+  /* ---- protocol accordion ---- */
+  document.querySelectorAll('.proto-row').forEach(function(row){
+    var btn = row.querySelector('.proto-btn');
+    btn.addEventListener('click', function(){
+      var open = row.classList.contains('open');
+      document.querySelectorAll('.proto-row').forEach(function(r){
+        r.classList.remove('open');
+        r.querySelector('.proto-btn').setAttribute('aria-expanded','false');
+      });
+      if(!open){ row.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+    });
+  });
+
+  /* ---- magnetic ---- */
+  if(fine && !reduced){
+    document.querySelectorAll('.magnetic').forEach(function(el){
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var mx = e.clientX - r.left - r.width/2;
+        var my = e.clientY - r.top - r.height/2;
+        el.style.transform = 'translate(' + (mx*0.22).toFixed(1) + 'px,' + (my*0.32).toFixed(1) + 'px)';
+      });
+      el.addEventListener('mouseleave', function(){ el.style.transform = ''; });
+    });
+  }
+
+  /* ---- form ---- */
+  var form = document.getElementById('bkForm');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var note = document.getElementById('bkNote');
+    var ru = root.getAttribute('data-lang') === 'ru';
+    note.textContent = ru
+      ? 'Заявка принята (демо). На рабочем сайте она сразу уходит в Telegram мастера.'
+      : 'Soʻrov qabul qilindi (demo). Ishlaydigan saytda u darhol ustaning Telegramiga tushadi.';
+    note.style.color = 'var(--oxblood)';
+  });
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+})();
+</script>

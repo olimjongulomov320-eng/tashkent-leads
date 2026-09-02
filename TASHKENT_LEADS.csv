@@ -1,0 +1,19 @@
+Rank,Business,Category,Address,Phone,Website,WebsiteScore,ReviewsAudience,Opportunity,Why,DemoStatus
+1,Affresco Ristorante,Restaurant,"Yakkasaray, ul. Babura 14","+998 78 129-90-90",none,1,"TripAdvisor 4.1, 119 reviews, #65/627",9,"15-year premium Sicilian restaurant, top-10% ranked, zero owned web",Built
+2,Express Beauty Team,Beauty salon,"Multiple Tashkent locations","not found",none,1,"46K Instagram followers",9,"Largest audience-to-infrastructure gap found; booking via DM only",Built
+3,EstiMED Clinic,Multi-specialty clinic,"Chilanzar, ul. Mukimi 11A","+998 78 555-57-75",estimed.uz,4,"not found",8,"Highest ticket sizes, no online booking, closes 17:00",Built
+4,Barbershop Dyadya Chill,Barbershop,"Tashkent City + Broadway","+998 97 776-66-92",none,1,"21K Instagram followers",8,"Two prime locations, booking via DM only",Built
+5,AnnTerra Beauty,Premium salon,"Nukusskaya 31/1, Mirabad","not found","booking link in bio",2,"~9.3K followers",8,"Premium positioning, no premium web presence",Built
+6,Smalto,Dentistry,"ul. Fidokor 32; Osiyo 88","+998 71 202-41-51",smalto.uz,4,"not found",7,"Real content trapped in mid-2010s template",Pending
+7,Basilic,Restaurant,"Mirabad, Amir Temur 19","not found",none,1,"TripAdvisor 3.7, 100 reviews, #206/646",7,"Open since 2009, invisible online",Pending
+8,Stomaservice,Dentistry,"ul. Buyuk Ipak Yoli","not found",none,1,"2GIS 4.7, 21 ratings",7,"30-year heritage, zero web presence",Pending
+9,BEFIT,Fitness,"Multiple locations","not found","none (app only)",2,"not found",7,"Has an app but no acquisition website",Built
+10,XFIT Tashkent,Fitness,"ul. Shota Rustaveli 71","+998 91 006-33-33",x-fit.uz,6,"not found",5,"Franchise template, footer says (c) 2002-2023",Pending
+11,Kluchi Tashkenta,Real estate,"ul. Aybek 20","+998 78 113-77-12",klyuchi.uz,5,"not found",5,"Functional but cluttered, stale testimonials since Jan 2024",Pending
+12,Oral Dent Clinic,Dentistry,"Yunusabad","+998 90 808-32-03",none,1,"not found",6,"Implants/braces marketed only via Instagram",Pending
+13,Barbershop Topor,Barbershop,"ul. Mirabad 21/1","+998 97 131-88-00",none,1,"12K followers",6,"Solid audience, single location, no site",Pending
+14,BARBADOS,Barbershop,"3 locations","not found",none,1,"~5K followers",6,"Multi-location chain needs a single booking hub",Pending
+15,Guzal Real Estate,Real estate,"not found","not found","none (via realting.uz)",1,"not found",5,"Full-service transactions, no trust-building site",Pending
+16,KUPIDOM,Real estate,"not found","not found","domkupi.uz (DNS failure)",0,"not found",5,"Dead domain on an actively marketed brand - verify still trading",Pending
+17,Lumiere,Fitness,"not found","not found","not found",1,"not found",5,"Ultra-premium, membership from 4,000,000 sum - needs verification",Pending
+18,LEMONFIT,Fitness,"Yunusabad","not found","not found",1,"not found",4,"24/7 differentiator not sold anywhere online",Pending
